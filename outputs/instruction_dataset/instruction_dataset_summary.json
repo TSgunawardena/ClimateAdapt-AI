@@ -1,0 +1,58 @@
+{
+  "dataset_name": "ClimateAdapt Planning Support Instruction Dataset v1",
+  "purpose": "Fine-tune an open-weight LLM for constrained interpretation of verified ClimateAdapt outputs.",
+  "prediction_training_data": false,
+  "seed": 8532,
+  "total_examples": 243,
+  "split_counts": {
+    "train": 192,
+    "test": 27,
+    "validation": 24
+  },
+  "task_counts": {
+    "prepare_planning_brief": 41,
+    "explain_uncertainty_and_escalate": 40,
+    "prepare_regional_generalisation_warning": 41,
+    "interpret_physical_guardrail": 41,
+    "refuse_unsafe_autonomous_action": 40,
+    "block_invalid_or_incomplete_analysis": 40
+  },
+  "status_counts": {
+    "draft_ready_for_human_review": 40,
+    "human_review_required": 163,
+    "blocked_data_validation": 40
+  },
+  "real_project_examples": 3,
+  "real_project_examples_usage": "Held-out test only; never used for fine-tuning.",
+  "synthetic_examples_usage": "Teach reporting format, evidence fidelity, safety refusal and escalation; not physical prediction.",
+  "source_files": [
+    "outputs\\demonstration_v2\\waimea_monaco_demo_summary_v2.json",
+    "outputs\\physicalist_guardrail_v2\\tahunanui_physicalist_guardrail_summary_v2.json",
+    "outputs\\full_region_inference_v2\\nelson_full_region_summary_v2.json",
+    "outputs\\agent_workflow_v1\\waimea_monaco_agent_report.json"
+  ],
+  "files": {
+    "train": {
+      "path": "data\\instruction\\climateadapt_instruction_train.jsonl",
+      "sha256": "5744f57ba3f088de9ae5a235007fe8df0d0a76072df74e7680dc2ce63d38a122"
+    },
+    "validation": {
+      "path": "data\\instruction\\climateadapt_instruction_validation.jsonl",
+      "sha256": "0863c5de8f5bd52d42e7037ab5eed516c83a10e91232b0f4dd65118618e7b0b7"
+    },
+    "test": {
+      "path": "data\\instruction\\climateadapt_instruction_test.jsonl",
+      "sha256": "87e97d6db78f023bc4cc91a49fdd9c510b5f4e4d7e1c0e939650a9d8f986e5fe"
+    },
+    "all": {
+      "path": "data\\instruction\\climateadapt_instruction_all.jsonl",
+      "sha256": "68e542f5a5b5f30ff52947092bbc1daa3e124d9f76885c94d93dd7775343d8b9"
+    }
+  },
+  "limitations": [
+    "This dataset teaches language behaviour, not flood prediction.",
+    "Synthetic records are explicitly marked and must not be presented as observed locations.",
+    "Real project records are reserved for held-out evaluation.",
+    "All final planning and public-safety decisions require authorised human review."
+  ]
+}

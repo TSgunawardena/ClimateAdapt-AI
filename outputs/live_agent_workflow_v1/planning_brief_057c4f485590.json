@@ -1,0 +1,157 @@
+{
+  "run_id": "057c4f485590",
+  "location": "Nelson example",
+  "final_status": "human_approved",
+  "validation": {
+    "status": "passed",
+    "api_healthy": true,
+    "crs_valid": true,
+    "valid_model_coverage": true,
+    "probability_range_valid": true,
+    "uncertainty_range_valid": true,
+    "frozen_threshold_confirmed": true,
+    "model_retrained": false,
+    "threshold_modified": false,
+    "gpu_required_for_query": false
+  },
+  "verified_prediction": {
+    "status": "screening_result_ready",
+    "location": {
+      "name": "Nelson example",
+      "nztm2000": {
+        "easting": 1620095.6470504545,
+        "northing": 5429021.601428031
+      },
+      "wgs84": {
+        "latitude": -41.29,
+        "longitude": 173.24
+      },
+      "grid": {
+        "row": 5581,
+        "column": 2927
+      }
+    },
+    "prediction": {
+      "probability": 0.08396248519420624,
+      "operational_threshold": 0.54,
+      "susceptible": false,
+      "risk_band": "lower_indicator",
+      "normalised_predictive_uncertainty": 0.4159896671772003
+    },
+    "terrain_context": {
+      "elevation_metres": 3.1402735710144043,
+      "slope_degrees": 0.19598902761936188,
+      "distance_to_coast_metres": 712.7762451171875,
+      "land_cover_class": 1
+    },
+    "coverage": {
+      "valid_model_coverage": true,
+      "resolution_metres": 5.0,
+      "crs": "EPSG:2193"
+    },
+    "human_review": {
+      "required": false,
+      "reasons": []
+    },
+    "provenance": {
+      "model": "GroupNorm Compact U-Net V2",
+      "checkpoint_epoch": 4,
+      "threshold_source": "Rocks Road validation region",
+      "serving_method": "precomputed regional raster lookup",
+      "model_retrained": false,
+      "threshold_modified": false
+    },
+    "limitations": [
+      "Planning-level susceptibility screening only.",
+      "Not a hydrodynamic flood-depth or flood-velocity simulation.",
+      "Not an emergency-warning, regulatory, or engineering-design product.",
+      "GIS, engineering, community and human review remain required."
+    ]
+  },
+  "analysis": {
+    "analysis_type": "single-point regional susceptibility screening",
+    "location": {
+      "name": "Nelson example",
+      "nztm2000": {
+        "easting": 1620095.6470504545,
+        "northing": 5429021.601428031
+      },
+      "wgs84": {
+        "latitude": -41.29,
+        "longitude": 173.24
+      },
+      "grid": {
+        "row": 5581,
+        "column": 2927
+      }
+    },
+    "operational_threshold": 0.54,
+    "probability": 0.08396248519420624,
+    "susceptible": false,
+    "risk_band": "lower_indicator",
+    "normalised_predictive_uncertainty": 0.4159896671772003,
+    "terrain_context": {
+      "elevation_metres": 3.1402735710144043,
+      "slope_degrees": 0.19598902761936188,
+      "distance_to_coast_metres": 712.7762451171875,
+      "land_cover_class": 1
+    },
+    "screening_interpretation": "The selected cell is below the frozen operational susceptibility threshold.",
+    "human_review_reasons": [
+      "all planning interpretations require authorised review"
+    ],
+    "accuracy_claimed": false,
+    "label_accessed_during_query": false,
+    "limitations": [
+      "Planning-level susceptibility screening only.",
+      "Not a hydrodynamic flood-depth or flood-velocity simulation.",
+      "Not an emergency-warning, regulatory, or engineering-design product.",
+      "GIS, engineering, community and human review remain required."
+    ]
+  },
+  "planning_report": {
+    "status": "draft_ready_for_human_review",
+    "headline": "Nelson example: single-point regional susceptibility screening",
+    "summary": "The Nelson example single-point regional susceptibility screening flags no planned intervention at the frozen 0.54 threshold.",
+    "evidence": [
+      "The selected cell has a 0.084 probability of susceptibility.",
+      "The selected cell is below the frozen 0.54 operational threshold.",
+      "The selected cell is in the lower_indicator risk band.",
+      "The terrain elevation is 3.14 m, slope 0.196\u00b0, 712.8 m from coast."
+    ],
+    "recommended_actions": [
+      "Review mapped susceptibility with qualified GIS and engineering personnel.",
+      "Record the model version, input provenance and reviewer decision."
+    ],
+    "limitations": [
+      "Planning-level susceptibility screening only.",
+      "Not a hydrodynamic flood-depth or flood-velocity simulation.",
+      "Not an emergency-warning, regulatory, or engineering-design product.",
+      "GIS, engineering, community and human review remain required."
+    ],
+    "requires_human_approval": true,
+    "prohibited_automatic_actions": [
+      "automatic land-use approval or refusal",
+      "automatic emergency or evacuation instruction",
+      "automatic engineering or funding decision",
+      "public release without authorised review"
+    ],
+    "stopping_condition": "Stop after recording the reviewer decision."
+  },
+  "llm_runtime": {
+    "model": "climateadapt-planner:4b",
+    "done_reason": "stop",
+    "prompt_eval_count": 832,
+    "eval_count": 299,
+    "safety_gate_passed": true,
+    "expected_status": "draft_ready_for_human_review"
+  },
+  "human_decision": {
+    "action": "approve",
+    "reviewer": "Prototype reviewer",
+    "notes": "Reviewed for prototype demonstration.",
+    "reviewed_at_utc": "2026-10-08T02:10:36.089052+00:00"
+  },
+  "warnings": [],
+  "errors": []
+}

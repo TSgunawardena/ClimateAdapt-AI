@@ -1,0 +1,76 @@
+{
+  "run_id": "47fc994a7b51",
+  "area": "Atawhai, Nelson",
+  "status": "human_review_required",
+  "data_validation": {
+    "status": "passed",
+    "crs": "EPSG:2193",
+    "frozen_operational_threshold": 0.54,
+    "provenance_checks": {
+      "flood_target_raster_accessed": false,
+      "model_retrained": false,
+      "threshold_modified": false
+    },
+    "search_circle_coverage_percentage": 100.0
+  },
+  "flood_analysis": {
+    "analysis_type": "place-based label-blind susceptibility screening",
+    "accuracy_claimed": false,
+    "area_name": "Atawhai, Nelson",
+    "radius_metres": 1000,
+    "operational_threshold": 0.54,
+    "evaluated_cells": 125662,
+    "evaluated_area_square_kilometres": 3.14155,
+    "susceptible_cells": 232,
+    "susceptible_area_square_kilometres": 0.0058,
+    "susceptible_percentage": 0.1846222406137098,
+    "mean_probability": 0.10524745285511017,
+    "maximum_probability": 0.6154645681381226,
+    "mean_uncertainty_indicator": 0.4725607931613922,
+    "high_uncertainty_percentage": 1.6560296668841814,
+    "median_elevation_metres": 162.8092041015625,
+    "median_slope_degrees": 24.920307159423828,
+    "median_distance_to_coast_metres": 1125.78857421875,
+    "risk_band_cells": {
+      "lower_indicator_below_0_35": 123951,
+      "review_band_0_35_to_threshold": 1479,
+      "operational_susceptibility": 232,
+      "high_indicator_0_75_or_above": 0
+    },
+    "leading_susceptible_land_cover_codes": [
+      {
+        "class_code": 5,
+        "cells": 232,
+        "percentage_of_susceptible_cells": 100.0
+      }
+    ]
+  },
+  "planning_recommendations": [
+    {
+      "priority": "1",
+      "action": "Review mapped susceptible locations",
+      "reason": "Within the 1,000 m search radius, 0.006 km\u00b2 (0.18% of evaluated land) meets the frozen operational threshold."
+    },
+    {
+      "priority": "2",
+      "action": "Inspect uncertain locations before prioritisation",
+      "reason": "1.66% of evaluated cells have entropy uncertainty of at least 0.80."
+    },
+    {
+      "priority": "3",
+      "action": "Request site-specific technical evidence",
+      "reason": "The model does not simulate water depth, velocity, tides, storm surge, rainfall, drainage capacity or asset exposure."
+    },
+    {
+      "priority": "4",
+      "action": "Keep a qualified human reviewer in control",
+      "reason": "The result may support further investigation but cannot authorise engineering, regulatory or emergency action."
+    }
+  ],
+  "mandatory_limitations": [
+    "Screening-level susceptibility; no local accuracy claim.",
+    "Not a hydrodynamic flood simulation.",
+    "Not an emergency-warning, engineering or regulatory product.",
+    "Requires GIS, engineering, community and human review."
+  ]
+}

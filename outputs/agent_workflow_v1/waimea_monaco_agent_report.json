@@ -1,0 +1,145 @@
+{
+  "run_id": "0fb8b6dfbf50",
+  "area": "Waimea inlet and Monaco",
+  "status": "human_review_required",
+  "data_validation": {
+    "status": "passed",
+    "frozen_operational_threshold": 0.54,
+    "provenance_checks": {
+      "flood_target_raster_accessed": false,
+      "model_retrained": false,
+      "threshold_modified": false
+    },
+    "raster_metadata": {
+      "probability": {
+        "width": 3095,
+        "height": 3092,
+        "crs": "EPSG:2193",
+        "resolution": [
+          5.0,
+          5.0
+        ],
+        "nodata": -9999.0
+      },
+      "binary": {
+        "width": 3095,
+        "height": 3092,
+        "crs": "EPSG:2193",
+        "resolution": [
+          5.0,
+          5.0
+        ],
+        "nodata": 255.0
+      },
+      "uncertainty": {
+        "width": 3095,
+        "height": 3092,
+        "crs": "EPSG:2193",
+        "resolution": [
+          5.0,
+          5.0
+        ],
+        "nodata": -9999.0
+      },
+      "land_cover": {
+        "width": 3095,
+        "height": 3092,
+        "crs": "EPSG:2193",
+        "resolution": [
+          5.0,
+          5.0
+        ],
+        "nodata": 0.0
+      }
+    },
+    "all_rasters_aligned": true,
+    "crs_valid": true
+  },
+  "flood_analysis": {
+    "analysis_type": "label-blind susceptibility analysis",
+    "accuracy_claimed": false,
+    "operational_threshold": 0.54,
+    "evaluated_cells": 150947,
+    "evaluated_area_square_kilometres": 3.773675,
+    "susceptible_cells": 47520,
+    "susceptible_area_square_kilometres": 1.188,
+    "susceptible_percentage": 31.481248385194803,
+    "probability_quantiles": {
+      "p05": 0.03604810908436775,
+      "p25": 0.07859371602535248,
+      "p50": 0.2203868329524994,
+      "p75": 0.670453667640686,
+      "p95": 0.974326103925705
+    },
+    "risk_band_cells": {
+      "lower_indicator_below_0_35": 88334,
+      "review_band_0_35_to_threshold": 15093,
+      "operational_susceptibility": 47520,
+      "high_indicator_0_75_or_above": 29772
+    },
+    "risk_band_percentages": {
+      "lower_indicator_below_0_35": 58.51987783791662,
+      "review_band_0_35_to_threshold": 9.998873776888576,
+      "operational_susceptibility": 31.481248385194803,
+      "high_indicator_0_75_or_above": 19.72347910193644
+    },
+    "mean_uncertainty_indicator": 0.5771400332450867,
+    "high_uncertainty_cells_entropy_0_80_or_above": 43003,
+    "high_uncertainty_percentage": 28.488807329725002,
+    "leading_susceptible_land_cover_codes": [
+      {
+        "class_code": 1,
+        "cells": 25324,
+        "percentage_of_susceptible_cells": 53.29124579124579
+      },
+      {
+        "class_code": 22,
+        "cells": 6988,
+        "percentage_of_susceptible_cells": 14.705387205387206
+      },
+      {
+        "class_code": 2,
+        "cells": 4703,
+        "percentage_of_susceptible_cells": 9.896885521885523
+      },
+      {
+        "class_code": 56,
+        "cells": 4545,
+        "percentage_of_susceptible_cells": 9.56439393939394
+      },
+      {
+        "class_code": 0,
+        "cells": 4248,
+        "percentage_of_susceptible_cells": 8.93939393939394
+      }
+    ]
+  },
+  "planning_recommendations": [
+    {
+      "priority": "1",
+      "action": "Review operational susceptibility locations",
+      "reason": "The frozen 0.54 threshold identifies 1.188 km\u00b2 (31.48%) for planning-level review."
+    },
+    {
+      "priority": "2",
+      "action": "Request engineering assessment before intervention",
+      "reason": "The model is a screening tool and does not simulate flood depth, velocity, drainage capacity, tides, or storm surge."
+    },
+    {
+      "priority": "3",
+      "action": "Inspect high-uncertainty locations",
+      "reason": "28.49% of evaluated cells have normalised entropy of at least 0.80."
+    },
+    {
+      "priority": "4",
+      "action": "Keep a human decision-maker in control",
+      "reason": "No automated land-use, emergency, funding, cultural-value, or public-safety decision should be made from this output."
+    }
+  ],
+  "mandatory_limitations": [
+    "Label-blind demonstration; no accuracy claim.",
+    "Not a hydrodynamic flood simulation.",
+    "Not an emergency-warning or regulatory product.",
+    "Requires GIS, engineering, community and human review."
+  ]
+}

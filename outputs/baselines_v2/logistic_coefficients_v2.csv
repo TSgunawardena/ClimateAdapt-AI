@@ -1,0 +1,21 @@
+feature,coefficient,absolute_coefficient,direction
+numeric__x0,-85.35981483230181,85.35981483230181,decreases predicted susceptibility
+land_cover__x3_41.0,-8.835374479372994,8.835374479372994,decreases predicted susceptibility
+land_cover__x3_52.0,-5.15105783376104,5.15105783376104,decreases predicted susceptibility
+land_cover__x3_46.0,-2.8326836029942606,2.8326836029942606,decreases predicted susceptibility
+land_cover__x3_20.0,-2.7033214699184436,2.7033214699184436,decreases predicted susceptibility
+land_cover__x3_40.0,-2.6013629894033508,2.6013629894033508,decreases predicted susceptibility
+land_cover__x3_21.0,2.408496914614807,2.408496914614807,increases predicted susceptibility
+numeric__x1,1.8226313534778704,1.8226313534778704,increases predicted susceptibility
+land_cover__x3_71.0,-1.7109564236623247,1.7109564236623247,decreases predicted susceptibility
+land_cover__x3_51.0,-1.283907301045545,1.283907301045545,decreases predicted susceptibility
+land_cover__x3_1.0,1.1044788243071222,1.1044788243071222,increases predicted susceptibility
+land_cover__x3_68.0,-0.8673951270732332,0.8673951270732332,decreases predicted susceptibility
+numeric__x2,-0.7681215809366365,0.7681215809366365,decreases predicted susceptibility
+land_cover__x3_2.0,0.7580696501854308,0.7580696501854308,increases predicted susceptibility
+land_cover__x3_5.0,-0.6799501791842969,0.6799501791842969,decreases predicted susceptibility
+land_cover__x3_10.0,-0.559808393246484,0.559808393246484,decreases predicted susceptibility
+land_cover__x3_54.0,0.0956485405292378,0.0956485405292378,increases predicted susceptibility
+land_cover__x3_69.0,-0.0018442608178059125,0.0018442608178059125,decreases predicted susceptibility
+land_cover__x3_64.0,-1.0495895565057214e-08,1.0495895565057214e-08,decreases predicted susceptibility
+land_cover__x3_33.0,2.936333802213582e-17,2.936333802213582e-17,increases predicted susceptibility

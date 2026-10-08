@@ -1,0 +1,171 @@
+{
+  "project_root": "C:\\Users\\Tharusha\\IT8532\\ClimateAdapt-AI\\ClimateAdapt_AI_Starter",
+  "area_name": "Atawhai, Nelson",
+  "run_id": "47fc994a7b51",
+  "started_at_utc": "2026-10-02T00:00:11.222028+00:00",
+  "status": "human_review_required",
+  "current_agent": "place_planning_support_agent",
+  "errors": [],
+  "warnings": [],
+  "facts": {
+    "place_result": {
+      "run_id": "47fc994a7b51",
+      "created_at_utc": "2026-10-02T00:00:09.335782+00:00",
+      "status": "analysis_ready",
+      "place": {
+        "query": "Atawhai",
+        "display_name": "Atawhai, Nelson",
+        "latitude": -41.2479,
+        "longitude": 173.3277,
+        "source": "offline_nelson_catalogue",
+        "easting_nztm2000": 1627456.572411845,
+        "northing_nztm2000": 5433671.3238319345
+      },
+      "radius_metres": 1000,
+      "crs": "EPSG:2193",
+      "operational_threshold": 0.54,
+      "threshold_source": "Rocks Road validation region",
+      "model_retrained": false,
+      "threshold_modified": false,
+      "flood_target_raster_accessed": false,
+      "circle_cells": 125662,
+      "evaluated_land_cells": 125662,
+      "search_circle_coverage_percentage": 100.0,
+      "evaluated_land_area_square_kilometres": 3.14155,
+      "susceptible_cells": 232,
+      "susceptible_area_square_kilometres": 0.0058,
+      "susceptible_percentage_of_evaluated_land": 0.1846222406137098,
+      "mean_probability": 0.10524745285511017,
+      "maximum_probability": 0.6154645681381226,
+      "median_probability": 0.09952899813652039,
+      "mean_uncertainty": 0.4725607931613922,
+      "high_uncertainty_cells_entropy_0_80_or_above": 2081,
+      "high_uncertainty_percentage": 1.6560296668841814,
+      "median_elevation_metres": 162.8092041015625,
+      "median_slope_degrees": 24.920307159423828,
+      "median_distance_to_coast_metres": 1125.78857421875,
+      "risk_band_cells": {
+        "lower_indicator_below_0_35": 123951,
+        "review_band_0_35_to_threshold": 1479,
+        "operational_susceptibility": 232,
+        "high_indicator_0_75_or_above": 0
+      },
+      "leading_susceptible_land_cover_codes": [
+        {
+          "class_code": 5,
+          "cells": 232,
+          "percentage_of_susceptible_cells": 100.0
+        }
+      ],
+      "interpretation_warning": "Screening-level susceptibility only; not a validated flood extent, engineering design product or emergency-warning service.",
+      "artifacts": {
+        "analysis_json": "outputs\\place_analysis_v1\\atawhai-nelson_1000m_47fc994a7b51\\place_analysis.json",
+        "local_map": "outputs\\place_analysis_v1\\atawhai-nelson_1000m_47fc994a7b51\\local_susceptibility_map.png"
+      }
+    },
+    "data_validation": {
+      "status": "passed",
+      "crs": "EPSG:2193",
+      "frozen_operational_threshold": 0.54,
+      "provenance_checks": {
+        "flood_target_raster_accessed": false,
+        "model_retrained": false,
+        "threshold_modified": false
+      },
+      "search_circle_coverage_percentage": 100.0
+    },
+    "flood_analysis": {
+      "analysis_type": "place-based label-blind susceptibility screening",
+      "accuracy_claimed": false,
+      "area_name": "Atawhai, Nelson",
+      "radius_metres": 1000,
+      "operational_threshold": 0.54,
+      "evaluated_cells": 125662,
+      "evaluated_area_square_kilometres": 3.14155,
+      "susceptible_cells": 232,
+      "susceptible_area_square_kilometres": 0.0058,
+      "susceptible_percentage": 0.1846222406137098,
+      "mean_probability": 0.10524745285511017,
+      "maximum_probability": 0.6154645681381226,
+      "mean_uncertainty_indicator": 0.4725607931613922,
+      "high_uncertainty_percentage": 1.6560296668841814,
+      "median_elevation_metres": 162.8092041015625,
+      "median_slope_degrees": 24.920307159423828,
+      "median_distance_to_coast_metres": 1125.78857421875,
+      "risk_band_cells": {
+        "lower_indicator_below_0_35": 123951,
+        "review_band_0_35_to_threshold": 1479,
+        "operational_susceptibility": 232,
+        "high_indicator_0_75_or_above": 0
+      },
+      "leading_susceptible_land_cover_codes": [
+        {
+          "class_code": 5,
+          "cells": 232,
+          "percentage_of_susceptible_cells": 100.0
+        }
+      ]
+    }
+  },
+  "recommendations": [
+    {
+      "priority": "1",
+      "action": "Review mapped susceptible locations",
+      "reason": "Within the 1,000 m search radius, 0.006 km\u00b2 (0.18% of evaluated land) meets the frozen operational threshold."
+    },
+    {
+      "priority": "2",
+      "action": "Inspect uncertain locations before prioritisation",
+      "reason": "1.66% of evaluated cells have entropy uncertainty of at least 0.80."
+    },
+    {
+      "priority": "3",
+      "action": "Request site-specific technical evidence",
+      "reason": "The model does not simulate water depth, velocity, tides, storm surge, rainfall, drainage capacity or asset exposure."
+    },
+    {
+      "priority": "4",
+      "action": "Keep a qualified human reviewer in control",
+      "reason": "The result may support further investigation but cannot authorise engineering, regulatory or emergency action."
+    }
+  ],
+  "artifacts": {
+    "analysis_json": "outputs\\place_analysis_v1\\atawhai-nelson_1000m_47fc994a7b51\\place_analysis.json",
+    "local_map": "outputs\\place_analysis_v1\\atawhai-nelson_1000m_47fc994a7b51\\local_susceptibility_map.png",
+    "agent_report_json": "outputs\\place_analysis_v1\\atawhai-nelson_1000m_47fc994a7b51\\place_agent_report.json",
+    "agent_report_markdown": "outputs\\place_analysis_v1\\atawhai-nelson_1000m_47fc994a7b51\\place_planning_brief.md",
+    "workflow_state": "outputs\\place_analysis_v1\\atawhai-nelson_1000m_47fc994a7b51\\place_workflow_state.json"
+  },
+  "audit_log": [
+    {
+      "timestamp_utc": "2026-10-02T00:00:11.222028+00:00",
+      "agent": "place_orchestrator",
+      "action": "workflow_start",
+      "outcome": "started"
+    },
+    {
+      "timestamp_utc": "2026-10-02T00:00:11.223536+00:00",
+      "agent": "place_data_validation_agent",
+      "action": "validate_place_result",
+      "outcome": "passed"
+    },
+    {
+      "timestamp_utc": "2026-10-02T00:00:11.223536+00:00",
+      "agent": "place_flood_analysis_agent",
+      "action": "analyse_place_outputs",
+      "outcome": "completed"
+    },
+    {
+      "timestamp_utc": "2026-10-02T00:00:11.226563+00:00",
+      "agent": "place_planning_support_agent",
+      "action": "prepare_place_planning_brief",
+      "outcome": "completed"
+    },
+    {
+      "timestamp_utc": "2026-10-02T00:00:11.227561+00:00",
+      "agent": "place_orchestrator",
+      "action": "workflow_end",
+      "outcome": "human review required"
+    }
+  ]
+}

@@ -1,0 +1,54 @@
+{
+  "experiment": "ClimateAdapt base language model validation benchmark",
+  "evaluation_split": "validation only",
+  "held_out_test_opened": false,
+  "model": "qwen3:4b",
+  "ollama_url": "http://127.0.0.1:11434",
+  "generation_configuration": {
+    "thinking": false,
+    "temperature": 0,
+    "seed": 8532,
+    "context_length": 4096,
+    "maximum_output_tokens": 700,
+    "format": "json"
+  },
+  "model_details": {
+    "parent_model": "",
+    "format": "gguf",
+    "family": "qwen3",
+    "families": [
+      "qwen3"
+    ],
+    "parameter_size": "4.0B",
+    "quantization_level": "Q4_K_M"
+  },
+  "examples": 24,
+  "expected_status_counts": {
+    "draft_ready_for_human_review": 10,
+    "human_review_required": 9,
+    "blocked_data_validation": 5
+  },
+  "predicted_status_counts": {
+    "draft_ready_for_human_review": 20,
+    "blocked_data_validation": 4
+  },
+  "metrics": {
+    "parse_success": 1.0,
+    "schema_completeness": 1.0,
+    "schema_type_validity": 1.0,
+    "status_accuracy": 0.5833333333333334,
+    "human_approval_accuracy": 1.0,
+    "safety_structure_score": 1.0,
+    "task_guardrail_accuracy": 0.5833333333333334,
+    "numeric_fidelity": 0.9537703275754746,
+    "reference_token_f1": 0.3870939800237454,
+    "behaviour_score": 0.8726885163787738
+  },
+  "runtime": {
+    "total_elapsed_seconds": 482.3262063000002,
+    "mean_elapsed_seconds": 20.096925262500008,
+    "total_output_tokens": 10222,
+    "output_tokens_per_second": 21.19312586893124
+  },
+  "important_note": "This benchmark was completed before fine-tuning. The test split was not opened, and no training decision should be based on held-out test results."
+}

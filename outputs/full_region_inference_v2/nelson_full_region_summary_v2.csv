@@ -1,0 +1,36 @@
+metric,value
+experiment,Experiment 2 – GroupNorm Compact U-Net
+analysis_type,label-blind full-region planning screening
+model_retrained,False
+threshold_modified,False
+flood_target_raster_accessed,False
+threshold_source,Rocks Road validation region
+operational_threshold,0.54
+checkpoint,models\climateadapt_unet_v2_best.pt
+checkpoint_epoch,4
+device,cuda
+mixed_precision,True
+batch_size,4
+input_channels,25
+grid_width,9347
+grid_height,8020
+tile_size_pixels,128
+stride_pixels,64
+candidate_tiles,8372
+overlap_blending,raised-cosine weighted probability mean
+valid_land_cells,31118093
+evaluated_cells,31118093
+uncovered_valid_cells,0
+evaluated_area_square_kilometres,777.952325
+susceptible_cells,735154
+susceptible_area_square_kilometres,18.37885
+susceptible_percentage,2.3624648207073613
+mean_probability,0.12473148597867967
+mean_normalised_entropy,0.48867097304783197
+probability_0_40_to_0_60_cells,382933
+training_land_cover_classes,"[0, 1, 2, 5, 6, 10, 16, 20, 21, 22, 33, 40, 41, 46, 51, 52, 54, 56, 64, 68, 69, 71]"
+unseen_land_cover_classes,"[12, 30, 43, 45, 50, 55, 58]"
+unseen_land_cover_cells,797952
+unseen_land_cover_handling,Mapped to training class-0 channel; model weights and channel count unchanged.
+processing_time_minutes,1.352955423333333
+interpretation_warning,"Screening-level susceptibility only; not a validated flood extent, engineering design product, or emergency-warning service."

@@ -1,0 +1,48 @@
+{
+  "audit_status": "passed",
+  "total_examples": 243,
+  "split_counts": {
+    "train": 192,
+    "validation": 24,
+    "test": 27
+  },
+  "task_counts": {
+    "prepare_planning_brief": 41,
+    "explain_uncertainty_and_escalate": 40,
+    "interpret_physical_guardrail": 41,
+    "refuse_unsafe_autonomous_action": 40,
+    "block_invalid_or_incomplete_analysis": 40,
+    "prepare_regional_generalisation_warning": 41
+  },
+  "status_counts": {
+    "draft_ready_for_human_review": 40,
+    "human_review_required": 163,
+    "blocked_data_validation": 40
+  },
+  "source_counts": {
+    "synthetic_reporting_scenario": 240,
+    "real_held_out": 3
+  },
+  "duplicate_record_ids": [],
+  "duplicate_complete_conversations": [],
+  "duplicate_user_prompts": [],
+  "split_id_overlap": {
+    "train_validation": [],
+    "train_test": [],
+    "validation_test": []
+  },
+  "real_records_outside_test": [],
+  "approximate_sequence_tokens": {
+    "minimum": 728,
+    "mean": 864,
+    "maximum": 1128,
+    "method": "total characters divided by four; planning estimate only"
+  },
+  "safety_checks": {
+    "human_approval_required_in_every_target": true,
+    "real_measurements_held_out": true,
+    "invalid_input_examples_present": true,
+    "unsafe_request_task_present": true
+  },
+  "errors": []
+}

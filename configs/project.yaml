@@ -1,0 +1,55 @@
+project:
+  name: ClimateAdapt AI
+  study_focus: Tahunanui, Nelson, New Zealand
+  crs: EPSG:2193
+  task: binary_raster_segmentation
+
+target:
+  source: Nelson City Council coastal inundation mapping
+  timeframe: 2050
+  scenario: SSP2-4.5
+  annual_exceedance_probability: 1%
+  connected_only: true
+  positive_value: 1
+  negative_value: 0
+
+raster:
+  resolution_metres: 5
+  tile_size_pixels: 128
+  tile_overlap_pixels: 0
+
+split:
+  method: geographic_holdout
+  test_cells:
+    - Tahunanui
+  validation_cells:
+    - Rocks Road
+  train_cells:
+    - Boulder Bank Glenduan
+    - Delaware Bay estuary
+    - Delaware Open Coast
+    - Nelson CBD
+    - Nelson Haven
+    - Oananga Bay
+    - Waimea inlet
+
+model:
+  family: compact_unet
+  input_channels:
+    - elevation
+    - slope
+    - distance_to_coast
+    - terrain_connectivity
+    - land_cover_channels
+  output_channels: 1
+  dropout: 0.20
+  loss: bce_plus_dice
+
+uncertainty:
+  method: mc_dropout
+  stochastic_passes: 20
+
+decision:
+  false_negative_cost: 5
+  false_positive_cost: 1
+  threshold_source: validation_only

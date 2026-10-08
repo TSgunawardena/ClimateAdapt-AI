@@ -1,0 +1,27 @@
+metric,value
+experiment,Experiment 2 – GroupNorm Compact U-Net
+analysis_type,label-blind planning demonstration
+demonstration_area,Waimea inlet and Monaco
+demonstration_split_id,4
+flood_target_raster_accessed,False
+model_retrained,False
+threshold_modified,False
+threshold_source,Rocks Road validation region
+operational_threshold,0.54
+checkpoint,models\climateadapt_unet_v2_best.pt
+checkpoint_epoch,4
+input_channels,25
+inference_tiles,112
+overlap_blending,raised-cosine weighted probability mean
+demonstration_cells,150947
+evaluated_cells,150947
+uncovered_cells,0
+evaluated_area_square_kilometres,3.773675
+susceptible_cells,47520
+susceptible_area_square_kilometres,1.188
+susceptible_percentage,31.481248385194803
+mean_probability,0.3699396848678589
+median_probability,0.2203868329524994
+mean_normalised_entropy,0.5771400332450867
+probability_0_40_to_0_60_cells,15917
+interpretation_warning,Susceptibility output for decision-support demonstration only; not a validated flood extent or emergency-warning product.

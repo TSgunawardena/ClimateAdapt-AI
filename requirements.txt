@@ -1,0 +1,20 @@
+numpy>=2.0,<3
+pandas>=2.2,<3
+scikit-learn>=1.5,<2
+matplotlib>=3.9,<4
+seaborn>=0.13,<1
+jupyterlab>=4.2,<5
+geopandas>=1.0,<2
+rasterio>=1.4,<2
+rioxarray>=0.17,<1
+xarray>=2024.7
+shapely>=2.0,<3
+pyproj>=3.7,<4
+requests>=2.32,<3
+PyYAML>=6.0,<7
+fastapi>=0.115,<1
+uvicorn[standard]>=0.30,<1
+python-multipart>=0.0.9
+# Install PyTorch later using the command recommended by pytorch.org for your CPU/GPU.
+
+langgraph>=1.2,<2

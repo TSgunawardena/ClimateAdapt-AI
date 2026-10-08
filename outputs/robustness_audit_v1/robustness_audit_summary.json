@@ -1,0 +1,18 @@
+{
+  "audit": "ClimateAdapt non-destructive robustness and safe-failure audit",
+  "status": "passed",
+  "tests": 17,
+  "passed": 17,
+  "failed": 0,
+  "gitea_write_operations_performed": 0,
+  "model_weights_modified": false,
+  "threshold_modified": false,
+  "secrets_written_to_outputs": false,
+  "processing_time_seconds": 2.2859045999939553,
+  "failed_test_ids": [],
+  "interpretation": "All tested boundaries failed safely and required services were available.",
+  "outputs": {
+    "results_csv": "outputs\\robustness_audit_v1\\robustness_test_results.csv",
+    "figure": "evidence\\figures\\robustness_audit.png"
+  }
+}

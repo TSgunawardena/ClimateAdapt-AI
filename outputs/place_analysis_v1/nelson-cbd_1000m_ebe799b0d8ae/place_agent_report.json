@@ -1,0 +1,86 @@
+{
+  "run_id": "ebe799b0d8ae",
+  "area": "Nelson CBD",
+  "status": "human_review_required",
+  "data_validation": {
+    "status": "passed",
+    "crs": "EPSG:2193",
+    "frozen_operational_threshold": 0.54,
+    "provenance_checks": {
+      "flood_target_raster_accessed": false,
+      "model_retrained": false,
+      "threshold_modified": false
+    },
+    "search_circle_coverage_percentage": 100.0
+  },
+  "flood_analysis": {
+    "analysis_type": "place-based label-blind susceptibility screening",
+    "accuracy_claimed": false,
+    "area_name": "Nelson CBD",
+    "radius_metres": 1000,
+    "operational_threshold": 0.54,
+    "evaluated_cells": 125674,
+    "evaluated_area_square_kilometres": 3.14185,
+    "susceptible_cells": 10231,
+    "susceptible_area_square_kilometres": 0.255775,
+    "susceptible_percentage": 8.140904244314655,
+    "mean_probability": 0.17523442208766937,
+    "maximum_probability": 0.9827262163162231,
+    "mean_uncertainty_indicator": 0.5331108570098877,
+    "high_uncertainty_percentage": 10.25112592899088,
+    "median_elevation_metres": 7.762720108032227,
+    "median_slope_degrees": 1.9843580722808838,
+    "median_distance_to_coast_metres": 1095.4678955078125,
+    "risk_band_cells": {
+      "lower_indicator_below_0_35": 111712,
+      "review_band_0_35_to_threshold": 3731,
+      "operational_susceptibility": 10231,
+      "high_indicator_0_75_or_above": 5375
+    },
+    "leading_susceptible_land_cover_codes": [
+      {
+        "class_code": 1,
+        "cells": 8574,
+        "percentage_of_susceptible_cells": 83.8041247189913
+      },
+      {
+        "class_code": 21,
+        "cells": 1584,
+        "percentage_of_susceptible_cells": 15.48235754080735
+      },
+      {
+        "class_code": 2,
+        "cells": 73,
+        "percentage_of_susceptible_cells": 0.7135177402013488
+      }
+    ]
+  },
+  "planning_recommendations": [
+    {
+      "priority": "1",
+      "action": "Review mapped susceptible locations",
+      "reason": "Within the 1,000 m search radius, 0.256 km\u00b2 (8.14% of evaluated land) meets the frozen operational threshold."
+    },
+    {
+      "priority": "2",
+      "action": "Inspect uncertain locations before prioritisation",
+      "reason": "10.25% of evaluated cells have entropy uncertainty of at least 0.80."
+    },
+    {
+      "priority": "3",
+      "action": "Request site-specific technical evidence",
+      "reason": "The model does not simulate water depth, velocity, tides, storm surge, rainfall, drainage capacity or asset exposure."
+    },
+    {
+      "priority": "4",
+      "action": "Keep a qualified human reviewer in control",
+      "reason": "The result may support further investigation but cannot authorise engineering, regulatory or emergency action."
+    }
+  ],
+  "mandatory_limitations": [
+    "Screening-level susceptibility; no local accuracy claim.",
+    "Not a hydrodynamic flood simulation.",
+    "Not an emergency-warning, engineering or regulatory product.",
+    "Requires GIS, engineering, community and human review."
+  ]
+}

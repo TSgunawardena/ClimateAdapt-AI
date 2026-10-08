@@ -1,0 +1,42 @@
+{
+  "method": "physicalist terrain and coastal-connectivity guardrail",
+  "label_blind_test_application": true,
+  "operational_threshold": 0.54,
+  "training_limit_quantile": 0.995,
+  "training_flood_cells_used": 48024,
+  "physical_limits": {
+    "maximum_elevation_metres": 4.5864973068237305,
+    "maximum_slope_degrees": 26.97048568725586,
+    "maximum_distance_to_coast_metres": 1123.15234375,
+    "coastal_seed_distance_metres": 100.0,
+    "connectivity_bridge_pixels": 2
+  },
+  "uncertainty_review": {
+    "epistemic_quantile": 0.9,
+    "epistemic_std_threshold": 0.020885782316327095,
+    "predictive_entropy_threshold": 0.9
+  },
+  "results": {
+    "evaluated_cells": 55670,
+    "original_candidate_cells": 13306,
+    "physically_supported_cells": 10561,
+    "automatic_supported_cells": 7019,
+    "human_review_cells": 3542,
+    "terrain_rejected_cells": 384,
+    "coast_disconnected_cells": 2361,
+    "supported_percentage_of_candidates": 79.37020892830301,
+    "human_review_percentage_of_supported": 33.5384906732317,
+    "supported_area_km2": 0.264025,
+    "connected_components_examined": 21,
+    "coast_connected_components": 7
+  },
+  "decision_codes": {
+    "0": "not susceptible at frozen model threshold",
+    "1": "physically supported",
+    "2": "physically supported; human review required",
+    "3": "rejected by terrain limits",
+    "4": "rejected because disconnected from coastal seed",
+    "255": "outside evaluated test region"
+  },
+  "important_note": "This is an explainable screening guardrail, not a hydrodynamic flood model."
+}

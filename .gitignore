@@ -1,0 +1,71 @@
+# Python
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*.pyo
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# IDE and OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Secrets and local configuration
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*token*
+secrets/
+
+# Raw/licensed and generated geospatial data
+data/raw/**
+data/interim/**
+data/processed/**
+!data/raw/.gitkeep
+!data/interim/.gitkeep
+!data/processed/.gitkeep
+*.tif
+*.tiff
+*.vrt
+*.gpkg
+*.shp
+*.shx
+*.dbf
+*.prj
+*.aux.xml
+*.tfw
+
+# Large model artifacts
+models/**
+!models/.gitkeep
+!models/README.md
+*.pt
+*.pth
+*.ckpt
+*.joblib
+*.gguf
+*.safetensors
+*.onnx
+
+# Large/generated packages and temporary work
+*.zip
+*.7z
+*.tar
+*.tar.gz
+*.tmp
+*.temp
+script*_reference/
+
+# Generated raster products are excluded; small audit evidence may be tracked
+outputs/**/*.tif
+outputs/**/*.tiff
+
+# Streamlit local secrets
+.streamlit/secrets.toml
+

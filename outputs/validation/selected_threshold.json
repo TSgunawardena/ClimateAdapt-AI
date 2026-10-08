@@ -1,0 +1,23 @@
+{
+    "selected_threshold": 0.53,
+    "selection_dataset": "Rocks Road validation region",
+    "selection_metric": "Dice coefficient",
+    "overlap_handling": "Mean probability for each unique geographic cell",
+    "unique_validation_pixels": 270182,
+    "duplicate_predictions_merged": 446306,
+    "test_dataset_used": false,
+    "validation_metrics": {
+        "threshold": 0.53,
+        "accuracy": 0.992308888082811,
+        "precision": 0.4826732673237459,
+        "recall": 0.38575667655595575,
+        "specificity": 0.996882458233853,
+        "dice": 0.4288070368322463,
+        "iou": 0.2729181245616763,
+        "true_positive": 780,
+        "true_negative": 267324,
+        "false_positive": 836,
+        "false_negative": 1242
+    },
+    "checkpoint": "models\\climateadapt_unet_best.pt"
+}

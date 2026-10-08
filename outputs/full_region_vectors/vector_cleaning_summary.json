@@ -1,0 +1,63 @@
+{
+  "crs": "EPSG:2193",
+  "raw_sources_preserved": true,
+  "datasets": {
+    "land_cover": {
+      "features_before": 8003,
+      "features_after_repair": 8003,
+      "invalid_before": 0,
+      "invalid_after": 0,
+      "empty_before": 0,
+      "empty_after": 0,
+      "source_files": [
+        "lcdb_v6_nelson_full.gpkg",
+        "lcdb_v6_nelson_north_coast.gpkg"
+      ],
+      "source_feature_counts": {
+        "lcdb_v6_nelson_full.gpkg": 2291,
+        "lcdb_v6_nelson_north_coast.gpkg": 5712
+      },
+      "features_after_deduplication": 5712,
+      "duplicates_or_overlaps_merged": 2291,
+      "deduplication_method": "dissolved overlapping exports by LCDB_UID",
+      "final_invalid": 0
+    },
+    "coastline": {
+      "features_before": 41,
+      "features_after_repair": 41,
+      "invalid_before": 0,
+      "invalid_after": 0,
+      "empty_before": 0,
+      "empty_after": 0,
+      "source_files": [
+        "nz_coastline_nelson_full.gpkg"
+      ],
+      "features_after_deduplication": 41,
+      "duplicates_or_overlaps_merged": 0,
+      "deduplication_method": "single authoritative export",
+      "final_invalid": 0
+    },
+    "flood_labels": {
+      "features_before": 9,
+      "features_after_repair": 9,
+      "invalid_before": 9,
+      "invalid_after": 0,
+      "empty_before": 0,
+      "empty_after": 0,
+      "source_files": [
+        "ncc_coastal_2050_ssp2_4_5_1pct_connected.geojson"
+      ],
+      "area_name_field": "InundationCellName",
+      "features_after_deduplication": 9,
+      "duplicates_or_overlaps_merged": 0,
+      "deduplication_method": "dissolved by InundationCellName",
+      "final_invalid": 0
+    }
+  },
+  "outputs": {
+    "land_cover": "data\\processed\\full_region\\vectors\\lcdb_nelson_combined_valid.gpkg",
+    "coastline": "data\\processed\\full_region\\vectors\\coastline_nelson_valid.gpkg",
+    "flood_labels": "data\\processed\\full_region\\vectors\\ncc_coastal_labels_valid.gpkg",
+    "evidence_figure": "evidence\\figures\\full_region_cleaned_vectors.png"
+  }
+}

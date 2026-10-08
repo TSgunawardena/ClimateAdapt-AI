@@ -1,0 +1,36 @@
+{
+  "experiment": "ClimateAdapt Qwen3 4B QLoRA v1",
+  "base_model": "unsloth/Qwen3-4B-unsloth-bnb-4bit",
+  "training_examples": 192,
+  "validation_examples": 24,
+  "held_out_test_accessed": false,
+  "seed": 8532,
+  "max_sequence_length": 2048,
+  "qlora_4bit": true,
+  "lora_rank": 16,
+  "lora_alpha": 16,
+  "epochs": 3,
+  "learning_rate": 0.0001,
+  "effective_batch_size": 8,
+  "completion_only_loss": true,
+  "training_seconds": 1012.8392382399998,
+  "train_metrics": {
+    "train_runtime": 1009.9228,
+    "train_samples_per_second": 0.57,
+    "train_steps_per_second": 0.071,
+    "total_flos": 1.074766880134656e+16,
+    "train_loss": 0.5117616528813314,
+    "epoch": 3.0
+  },
+  "validation_metrics": {
+    "eval_loss": 0.0043550399132072926
+  },
+  "best_validation_loss": 0.00435504037886858,
+  "gpu": "Tesla T4",
+  "versions": {
+    "python": "3.13.15",
+    "torch": "2.11.0+cu130",
+    "transformers": "5.17.0",
+    "trl": "1.13.0"
+  }
+}

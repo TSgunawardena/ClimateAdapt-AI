@@ -1,0 +1,252 @@
+{
+  "project_root": "C:\\Users\\Tharusha\\IT8532\\ClimateAdapt-AI\\ClimateAdapt_AI_Starter",
+  "run_id": "5728a89fdc2c",
+  "started_at_utc": "2026-10-08T02:58:46.835469+00:00",
+  "location_name": "Nelson example",
+  "location_request": {
+    "location_name": "Nelson example",
+    "latitude": -41.29,
+    "longitude": 173.24
+  },
+  "api_url": "http://127.0.0.1:8000",
+  "ollama_url": "http://127.0.0.1:11434",
+  "ollama_model": "climateadapt-planner:4b",
+  "status": "human_approved_gitea_verified",
+  "current_agent": "langgraph_orchestrator",
+  "validation_result": {
+    "status": "passed",
+    "api_healthy": true,
+    "crs_valid": true,
+    "valid_model_coverage": true,
+    "probability_range_valid": true,
+    "uncertainty_range_valid": true,
+    "frozen_threshold_confirmed": true,
+    "model_retrained": false,
+    "threshold_modified": false,
+    "gpu_required_for_query": false
+  },
+  "prediction": {
+    "status": "screening_result_ready",
+    "location": {
+      "name": "Nelson example",
+      "nztm2000": {
+        "easting": 1620095.6470504545,
+        "northing": 5429021.601428031
+      },
+      "wgs84": {
+        "latitude": -41.29,
+        "longitude": 173.24
+      },
+      "grid": {
+        "row": 5581,
+        "column": 2927
+      }
+    },
+    "prediction": {
+      "probability": 0.08396248519420624,
+      "operational_threshold": 0.54,
+      "susceptible": false,
+      "risk_band": "lower_indicator",
+      "normalised_predictive_uncertainty": 0.4159896671772003
+    },
+    "terrain_context": {
+      "elevation_metres": 3.1402735710144043,
+      "slope_degrees": 0.19598902761936188,
+      "distance_to_coast_metres": 712.7762451171875,
+      "land_cover_class": 1
+    },
+    "coverage": {
+      "valid_model_coverage": true,
+      "resolution_metres": 5.0,
+      "crs": "EPSG:2193"
+    },
+    "human_review": {
+      "required": false,
+      "reasons": []
+    },
+    "provenance": {
+      "model": "GroupNorm Compact U-Net V2",
+      "checkpoint_epoch": 4,
+      "threshold_source": "Rocks Road validation region",
+      "serving_method": "precomputed regional raster lookup",
+      "model_retrained": false,
+      "threshold_modified": false
+    },
+    "limitations": [
+      "Planning-level susceptibility screening only.",
+      "Not a hydrodynamic flood-depth or flood-velocity simulation.",
+      "Not an emergency-warning, regulatory, or engineering-design product.",
+      "GIS, engineering, community and human review remain required."
+    ]
+  },
+  "analysis": {
+    "analysis_type": "single-point regional susceptibility screening",
+    "location": {
+      "name": "Nelson example",
+      "nztm2000": {
+        "easting": 1620095.6470504545,
+        "northing": 5429021.601428031
+      },
+      "wgs84": {
+        "latitude": -41.29,
+        "longitude": 173.24
+      },
+      "grid": {
+        "row": 5581,
+        "column": 2927
+      }
+    },
+    "operational_threshold": 0.54,
+    "probability": 0.08396248519420624,
+    "susceptible": false,
+    "risk_band": "lower_indicator",
+    "normalised_predictive_uncertainty": 0.4159896671772003,
+    "terrain_context": {
+      "elevation_metres": 3.1402735710144043,
+      "slope_degrees": 0.19598902761936188,
+      "distance_to_coast_metres": 712.7762451171875,
+      "land_cover_class": 1
+    },
+    "screening_interpretation": "The selected cell is below the frozen operational susceptibility threshold.",
+    "human_review_reasons": [
+      "all planning interpretations require authorised review"
+    ],
+    "accuracy_claimed": false,
+    "label_accessed_during_query": false,
+    "limitations": [
+      "Planning-level susceptibility screening only.",
+      "Not a hydrodynamic flood-depth or flood-velocity simulation.",
+      "Not an emergency-warning, regulatory, or engineering-design product.",
+      "GIS, engineering, community and human review remain required."
+    ]
+  },
+  "planning_report": {
+    "status": "draft_ready_for_human_review",
+    "headline": "Nelson example: single-point regional susceptibility screening",
+    "summary": "The Nelson example single-point regional susceptibility screening flags no planned intervention at the frozen 0.54 threshold.",
+    "evidence": [
+      "The selected cell has a 0.084 probability of susceptibility.",
+      "The selected cell is below the frozen 0.54 operational threshold.",
+      "The selected cell is in the lower_indicator risk band.",
+      "The terrain elevation is 3.14 m, slope 0.196\u00b0, 712.8 m from coast."
+    ],
+    "recommended_actions": [
+      "Review mapped susceptibility with qualified GIS and engineering personnel.",
+      "Record the model version, input provenance and reviewer decision."
+    ],
+    "limitations": [
+      "Planning-level susceptibility screening only.",
+      "Not a hydrodynamic flood-depth or flood-velocity simulation.",
+      "Not an emergency-warning, regulatory, or engineering-design product.",
+      "GIS, engineering, community and human review remain required."
+    ],
+    "requires_human_approval": true,
+    "prohibited_automatic_actions": [
+      "automatic land-use approval or refusal",
+      "automatic emergency or evacuation instruction",
+      "automatic engineering or funding decision",
+      "public release without authorised review"
+    ],
+    "stopping_condition": "Stop after recording the reviewer decision."
+  },
+  "llm_raw_response": "{\n  \"status\": \"draft_ready_for_human_review\",\n  \"headline\": \"Nelson example: single-point regional susceptibility screening\",\n  \"summary\": \"The Nelson example single-point regional susceptibility screening flags no planned intervention at the frozen 0.54 threshold.\",\n  \"evidence\": [\n    \"The selected cell has a 0.084 probability of susceptibility.\",\n    \"The selected cell is below the frozen 0.54 operational threshold.\",\n    \"The selected cell is in the lower_indicator risk band.\",\n    \"The terrain elevation is 3.14 m, slope 0.196\u00b0, 712.8 m from coast.\"\n  ],\n  \"recommended_actions\": [\n    \"Review mapped susceptibility with qualified GIS and engineering personnel.\",\n    \"Record the model version, input provenance and reviewer decision.\"\n  ],\n  \"limitations\": [\n    \"Planning-level susceptibility screening only.\",\n    \"Not a hydrodynamic flood-depth or flood-velocity simulation.\",\n    \"Not an emergency-warning, regulatory, or engineering-design product.\",\n    \"GIS, engineering, community and human review remain required.\"\n  ],\n  \"requires_human_approval\": true,\n  \"prohibited_automatic_actions\": [\n    \"automatic land-use approval or refusal\",\n    \"automatic emergency or evacuation instruction\",\n    \"automatic engineering or funding decision\",\n    \"public release without authorised review\"\n  ],\n  \"stopping_condition\": \"Stop after recording the reviewer decision.\"\n}",
+  "llm_runtime": {
+    "model": "climateadapt-planner:4b",
+    "done_reason": "stop",
+    "prompt_eval_count": 832,
+    "eval_count": 299,
+    "safety_gate_passed": true,
+    "expected_status": "draft_ready_for_human_review"
+  },
+  "human_review_required": true,
+  "human_decision": {
+    "action": "approve",
+    "reviewer": "Tharusha",
+    "notes": "Approved for Gitea prototype evidence.",
+    "reviewed_at_utc": "2026-10-08T02:59:20.704080+00:00"
+  },
+  "revision_count": 0,
+  "artifacts": {
+    "workflow_state": "outputs\\gitea_agent_workflow_v1\\workflow_5728a89fdc2c.json",
+    "gitea_evidence": "outputs\\gitea_agent_workflow_v1\\gitea_evidence_5728a89fdc2c.json",
+    "planning_brief": "outputs\\gitea_agent_workflow_v1\\planning_brief_5728a89fdc2c.md"
+  },
+  "warnings": [],
+  "errors": [],
+  "audit_log": [
+    {
+      "timestamp_utc": "2026-10-08T02:58:46.939250+00:00",
+      "agent": "data_validation_agent",
+      "action": "validate_live_prediction",
+      "outcome": "passed"
+    },
+    {
+      "timestamp_utc": "2026-10-08T02:58:46.939250+00:00",
+      "agent": "flood_analysis_agent",
+      "action": "analyse_verified_prediction",
+      "outcome": "completed"
+    },
+    {
+      "timestamp_utc": "2026-10-08T02:59:10.618663+00:00",
+      "agent": "planning_support_agent",
+      "action": "generate_guarded_planning_brief",
+      "outcome": "llm accepted"
+    },
+    {
+      "timestamp_utc": "2026-10-08T02:59:20.704080+00:00",
+      "agent": "human_review",
+      "action": "review_planning_brief",
+      "outcome": "approve"
+    },
+    {
+      "timestamp_utc": "2026-10-08T02:59:20.744656+00:00",
+      "agent": "gitea_action_agent",
+      "action": "create_issue",
+      "outcome": "created issue #1"
+    },
+    {
+      "timestamp_utc": "2026-10-08T02:59:20.767267+00:00",
+      "agent": "gitea_verification_agent",
+      "action": "verify_issue",
+      "outcome": "passed"
+    }
+  ],
+  "gitea_url": "http://127.0.0.1:3000",
+  "gitea_owner": "tharusha",
+  "gitea_repo": "climateadapt-ai",
+  "gitea_action": {
+    "status": "created",
+    "repository": "tharusha/climateadapt-ai",
+    "issue_number": 1,
+    "issue_id": 1,
+    "title": "[ClimateAdapt] Review \u2013 Nelson example \u2013 5728a89fdc2c",
+    "html_url": "http://127.0.0.1:3000/tharusha/climateadapt-ai/issues/1",
+    "state": "open",
+    "created_at": "2026-10-08T15:59:20+13:00",
+    "expected_body_sha256": "e5b0b15a8b9ed49109a181878297c5c1a6aff5ec86f9f756e3ba866f3c89e936"
+  },
+  "gitea_verification": {
+    "status": "passed",
+    "verified_at_utc": "2026-10-08T02:59:20.767267+00:00",
+    "method": "independent GET of persisted Gitea issue and repository",
+    "issue_number": 1,
+    "html_url": "http://127.0.0.1:3000/tharusha/climateadapt-ai/issues/1",
+    "checks": {
+      "issue_number_matches": true,
+      "title_matches": true,
+      "body_hash_matches": true,
+      "run_id_present": true,
+      "human_approval_present": true,
+      "repository_matches": true,
+      "issue_is_open": true
+    },
+    "observed": {
+      "repository": "tharusha/climateadapt-ai",
+      "title": "[ClimateAdapt] Review \u2013 Nelson example \u2013 5728a89fdc2c",
+      "state": "open",
+      "created_by": "tharusha",
+      "body_sha256": "e5b0b15a8b9ed49109a181878297c5c1a6aff5ec86f9f756e3ba866f3c89e936"
+    }
+  },
+  "completed_at_utc": "2026-10-08T02:59:20.769980+00:00"
+}

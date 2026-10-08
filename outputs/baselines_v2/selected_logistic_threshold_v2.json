@@ -1,0 +1,8 @@
+{
+  "model": "pixel-level logistic regression baseline",
+  "threshold": 0.01,
+  "selection_region": "Rocks Road validation",
+  "selection_metric": "F2 score",
+  "test_region": "Tahunanui",
+  "test_data_used_during_selection": false
+}

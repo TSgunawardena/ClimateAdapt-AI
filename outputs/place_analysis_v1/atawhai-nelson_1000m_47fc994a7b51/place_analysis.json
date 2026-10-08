@@ -1,0 +1,55 @@
+{
+  "run_id": "47fc994a7b51",
+  "created_at_utc": "2026-10-02T00:00:09.335782+00:00",
+  "status": "analysis_ready",
+  "place": {
+    "query": "Atawhai",
+    "display_name": "Atawhai, Nelson",
+    "latitude": -41.2479,
+    "longitude": 173.3277,
+    "source": "offline_nelson_catalogue",
+    "easting_nztm2000": 1627456.572411845,
+    "northing_nztm2000": 5433671.3238319345
+  },
+  "radius_metres": 1000,
+  "crs": "EPSG:2193",
+  "operational_threshold": 0.54,
+  "threshold_source": "Rocks Road validation region",
+  "model_retrained": false,
+  "threshold_modified": false,
+  "flood_target_raster_accessed": false,
+  "circle_cells": 125662,
+  "evaluated_land_cells": 125662,
+  "search_circle_coverage_percentage": 100.0,
+  "evaluated_land_area_square_kilometres": 3.14155,
+  "susceptible_cells": 232,
+  "susceptible_area_square_kilometres": 0.0058,
+  "susceptible_percentage_of_evaluated_land": 0.1846222406137098,
+  "mean_probability": 0.10524745285511017,
+  "maximum_probability": 0.6154645681381226,
+  "median_probability": 0.09952899813652039,
+  "mean_uncertainty": 0.4725607931613922,
+  "high_uncertainty_cells_entropy_0_80_or_above": 2081,
+  "high_uncertainty_percentage": 1.6560296668841814,
+  "median_elevation_metres": 162.8092041015625,
+  "median_slope_degrees": 24.920307159423828,
+  "median_distance_to_coast_metres": 1125.78857421875,
+  "risk_band_cells": {
+    "lower_indicator_below_0_35": 123951,
+    "review_band_0_35_to_threshold": 1479,
+    "operational_susceptibility": 232,
+    "high_indicator_0_75_or_above": 0
+  },
+  "leading_susceptible_land_cover_codes": [
+    {
+      "class_code": 5,
+      "cells": 232,
+      "percentage_of_susceptible_cells": 100.0
+    }
+  ],
+  "interpretation_warning": "Screening-level susceptibility only; not a validated flood extent, engineering design product or emergency-warning service.",
+  "artifacts": {
+    "analysis_json": "outputs\\place_analysis_v1\\atawhai-nelson_1000m_47fc994a7b51\\place_analysis.json",
+    "local_map": "outputs\\place_analysis_v1\\atawhai-nelson_1000m_47fc994a7b51\\local_susceptibility_map.png"
+  }
+}

@@ -1,0 +1,67 @@
+{
+  "experiment": "Experiment 2 \u2013 GroupNorm Compact U-Net V2",
+  "audit_type": "post-hoc grouped ablation and environmental/spatial data-bias audit",
+  "demographic_fairness_audit": false,
+  "causal_explanation": false,
+  "model_retrained": false,
+  "threshold_modified": false,
+  "test_area": "Tahunanui",
+  "threshold_source": "Rocks Road validation region",
+  "operational_threshold": 0.54,
+  "checkpoint_epoch": 4,
+  "input_channels": 25,
+  "evaluated_unique_test_pixels": 55670,
+  "baseline_metrics": {
+    "pixels": 55670,
+    "positive_pixels": 25315,
+    "flood_prevalence": 0.4547332495060176,
+    "precision": 0.8431997571341834,
+    "recall": 0.4388702350385147,
+    "specificity": 0.9319387250864767,
+    "balanced_accuracy": 0.6854044800624957,
+    "f2_score": 0.48542416722010556,
+    "dice": 0.5772778052012159,
+    "iou": 0.4057558160768416,
+    "true_positives": 11110,
+    "true_negatives": 28289,
+    "false_positives": 2066,
+    "false_negatives": 14205,
+    "roc_auc": 0.8471687090217208,
+    "average_precision": 0.8315679301803468
+  },
+  "most_influential_ablation_by_average_precision_drop": {
+    "feature_group": "Coast distance removed",
+    "delta_average_precision": -0.12445534090492483,
+    "delta_dice": -0.04137201717816397
+  },
+  "geographic_split_flood_prevalence_range_percentage_points": 35.623449881659674,
+  "environmental_subgroup_recall_range": 0.9208021753908906,
+  "full_region_unseen_land_cover_classes": [
+    12,
+    30,
+    43,
+    45,
+    50,
+    55,
+    58
+  ],
+  "full_region_unseen_land_cover_cells": 797952,
+  "warnings": [
+    "Flood prevalence differs materially between geographic splits; aggregate metrics should not be treated as location-invariant.",
+    "Recall varies materially across environmental subgroups; human review and subgroup reporting are required.",
+    "The full-region screen contains LCDB classes unseen during training; their outputs require additional caution."
+  ],
+  "required_controls": [
+    "Retain the frozen validation threshold and independent test protocol.",
+    "Report subgroup support and flood prevalence beside performance metrics.",
+    "Flag unseen land-cover classes and high-uncertainty outputs for human review.",
+    "Do not interpret ablation importance as physical causation.",
+    "Do not use this screening model as a hydrodynamic or emergency-warning product."
+  ],
+  "outputs": {
+    "ablation_csv": "outputs\\explainability_bias_v2\\feature_group_ablation_v2.csv",
+    "subgroup_csv": "outputs\\explainability_bias_v2\\environmental_subgroup_metrics_v2.csv",
+    "split_csv": "outputs\\explainability_bias_v2\\geographic_split_representation_v2.csv",
+    "figure": "evidence\\figures\\explainability_bias_audit_v2.png"
+  }
+}

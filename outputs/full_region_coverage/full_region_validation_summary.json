@@ -1,0 +1,157 @@
+{
+  "expected_crs": "EPSG:2193",
+  "dem_tile_count": 6,
+  "land_cover_file_count": 2,
+  "land_cover_feature_count_before_deduplication": 8003,
+  "coastline_feature_count": 41,
+  "label_feature_count": 9,
+  "invalid_geometry_counts": {
+    "land_cover": 0,
+    "coastline": 0,
+    "labels": 9
+  },
+  "coverage_counts": {
+    "full": 9,
+    "partial": 0,
+    "none": 0
+  },
+  "dem_tiles": [
+    {
+      "file": "data\\raw\\nelson_region_full\\dem\\north_coast\\BP26.tif",
+      "crs": "EPSG:2193",
+      "resolution_x": 1.0,
+      "resolution_y": 1.0,
+      "width": 10944,
+      "height": 14927,
+      "bands": 1,
+      "dtype": "float32",
+      "nodata": -9999.0,
+      "left": 1625056.0000000002,
+      "bottom": 5442000.0,
+      "right": 1636000.0000000002,
+      "top": 5456927.0
+    },
+    {
+      "file": "data\\raw\\nelson_region_full\\dem\\north_coast\\BP27.tif",
+      "crs": "EPSG:2193",
+      "resolution_x": 1.0,
+      "resolution_y": 1.0,
+      "width": 16193,
+      "height": 14927,
+      "bands": 1,
+      "dtype": "float32",
+      "nodata": -9999.0,
+      "left": 1636000.0000000002,
+      "bottom": 5442000.0,
+      "right": 1652193.0000000002,
+      "top": 5456927.0
+    },
+    {
+      "file": "data\\raw\\nelson_region_full\\dem\\north_coast\\BQ26.tif",
+      "crs": "EPSG:2193",
+      "resolution_x": 1.0,
+      "resolution_y": 1.0,
+      "width": 10944,
+      "height": 10493,
+      "bands": 1,
+      "dtype": "float32",
+      "nodata": -9999.0,
+      "left": 1625056.0000000002,
+      "bottom": 5431507.0,
+      "right": 1636000.0000000002,
+      "top": 5442000.0
+    },
+    {
+      "file": "data\\raw\\nelson_region_full\\dem\\north_coast\\BQ27.tif",
+      "crs": "EPSG:2193",
+      "resolution_x": 1.0,
+      "resolution_y": 1.0,
+      "width": 16193,
+      "height": 10493,
+      "bands": 1,
+      "dtype": "float32",
+      "nodata": -9999.0,
+      "left": 1636000.0000000002,
+      "bottom": 5431507.0,
+      "right": 1652193.0000000002,
+      "top": 5442000.0
+    },
+    {
+      "file": "data\\raw\\nelson_region_full\\dem\\south_central\\BQ25.tif",
+      "crs": "EPSG:2193",
+      "resolution_x": 1.0,
+      "resolution_y": 1.0,
+      "width": 6537,
+      "height": 25155,
+      "bands": 1,
+      "dtype": "float32",
+      "nodata": -9999.0,
+      "left": 1605463.0000000002,
+      "bottom": 5416830.0,
+      "right": 1612000.0000000002,
+      "top": 5441985.0
+    },
+    {
+      "file": "data\\raw\\nelson_region_full\\dem\\south_central\\BQ26.tif",
+      "crs": "EPSG:2193",
+      "resolution_x": 1.0,
+      "resolution_y": 1.0,
+      "width": 23805,
+      "height": 25155,
+      "bands": 1,
+      "dtype": "float32",
+      "nodata": -9999.0,
+      "left": 1612000.0000000002,
+      "bottom": 5416830.0,
+      "right": 1635805.0000000002,
+      "top": 5441985.0
+    }
+  ],
+  "coverage": [
+    {
+      "coastal_area": "Delaware Open Coast",
+      "coverage_percentage": 100.00000000004809,
+      "status": "FULL"
+    },
+    {
+      "coastal_area": "Nelson Haven",
+      "coverage_percentage": 100.00000000001255,
+      "status": "FULL"
+    },
+    {
+      "coastal_area": "Rocks Road",
+      "coverage_percentage": 100.0000000000077,
+      "status": "FULL"
+    },
+    {
+      "coastal_area": "Delaware Bay estuary",
+      "coverage_percentage": 100.00000000000361,
+      "status": "FULL"
+    },
+    {
+      "coastal_area": "Boulder Bank Glenduan",
+      "coverage_percentage": 100.0,
+      "status": "FULL"
+    },
+    {
+      "coastal_area": "Nelson CBD",
+      "coverage_percentage": 99.99999999998772,
+      "status": "FULL"
+    },
+    {
+      "coastal_area": "Tahunanui",
+      "coverage_percentage": 99.99999999998639,
+      "status": "FULL"
+    },
+    {
+      "coastal_area": "Waimea inlet",
+      "coverage_percentage": 99.99999999998379,
+      "status": "FULL"
+    },
+    {
+      "coastal_area": "Oananga Bay",
+      "coverage_percentage": 99.99999999993994,
+      "status": "FULL"
+    }
+  ]
+}
