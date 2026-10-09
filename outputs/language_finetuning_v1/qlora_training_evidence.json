@@ -1,0 +1,60 @@
+{
+  "experiment": "ClimateAdapt Qwen3 4B QLoRA v1",
+  "base_model": "unsloth/Qwen3-4B-unsloth-bnb-4bit",
+  "training_examples": 192,
+  "validation_examples": 24,
+  "held_out_test_accessed_during_training": false,
+  "configuration": {
+    "qlora_4bit": true,
+    "lora_rank": 16,
+    "lora_alpha": 16,
+    "epochs": 3,
+    "learning_rate": 0.0001,
+    "effective_batch_size": 8,
+    "max_sequence_length": 2048,
+    "completion_only_loss": true,
+    "seed": 8532,
+    "gpu": "Tesla T4"
+  },
+  "observed_losses": {
+    "first_logged_training_loss": 2.257734680175781,
+    "final_logged_training_loss": 0.0037335719913244247,
+    "reported_mean_training_loss": 0.5117616528813314,
+    "validation_by_epoch": [
+      {
+        "step": 24,
+        "epoch": 1.0,
+        "eval_loss": 0.5040627717971802
+      },
+      {
+        "step": 48,
+        "epoch": 2.0,
+        "eval_loss": 0.015311699360609055
+      },
+      {
+        "step": 72,
+        "epoch": 3.0,
+        "eval_loss": 0.0043550399132072926
+      }
+    ],
+    "best_validation_loss": 0.00435504037886858
+  },
+  "checks": {
+    "training_loss_decreased": true,
+    "validation_loss_decreased_each_epoch": true,
+    "minimum_validation_loss_at_final_epoch": true,
+    "classical_loss_curve_overfitting_observed": false
+  },
+  "interpretation": "No classical loss-curve overfitting was observed during the three epochs: training loss decreased and validation loss improved at every epoch, with the lowest validation loss at the final epoch. This is limited evidence rather than proof of broad generalisation because validation contained only 24 examples drawn from the same constrained instruction-generation process. The independently held-out 27-example base-versus-fine-tuned evaluation is therefore treated as the stronger behavioural generalisation test.",
+  "limitations": [
+    "The validation split contains only 24 examples.",
+    "Training and validation examples share the same constrained schema and generation process.",
+    "Very low completion-token loss can reflect template regularity as well as task learning.",
+    "The loss curve does not establish performance on unrestricted planning language."
+  ],
+  "source_files": [
+    "outputs\\language_finetuning_v1\\training_history.csv",
+    "outputs\\language_finetuning_v1\\fine_tuning_summary.json",
+    "evidence\\figures\\qwen3_4b_qlora_training_curves.png"
+  ]
+}
