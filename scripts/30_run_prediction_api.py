@@ -380,7 +380,11 @@ def predict_point(request: PointPredictionRequest) -> dict[str, Any]:
 
     score = float(score)
     threshold = float(STORE.summary.get("frozen_threshold", DEFAULT_THRESHOLD))
-    binary_value = bool(int(susceptibility)) if susceptibility is not None else score >= threshold
+    binary_value = (
+        bool(int(susceptibility))
+        if susceptibility is not None
+        else score >= threshold
+    )
 
     terrain = {
         "elevation_metres": STORE.read_value("elevation_metres", row, column),
@@ -392,7 +396,15 @@ def predict_point(request: PointPredictionRequest) -> dict[str, Any]:
     }
 
     band = risk_band(score, threshold)
-    review_reasons: list[str] = []
+    review_reasons: list[str] = [
+        "all planning interpretations require authorised human review"
+    ]
+
+    if binary_value:
+        review_reasons.append(
+            "the point meets the frozen operational susceptibility threshold"
+        )
+
     if NEAR_THRESHOLD_LOWER <= score < NEAR_THRESHOLD_UPPER:
         review_reasons.append(
             "susceptibility score is in the predeclared near-threshold review band"
