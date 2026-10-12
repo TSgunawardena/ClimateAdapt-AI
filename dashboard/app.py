@@ -1,119 +1,101 @@
-"""ClimateAdapt AI local Streamlit prototype dashboard."""
+"""ClimateAdapt AI V3 local Streamlit prototype dashboard."""
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
 import json
+import os
 from pathlib import Path
 import sys
+from typing import Any
 
 import pandas as pd
 import streamlit as st
-
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 SRC_DIR = PROJECT_ROOT / "src"
 if str(SRC_DIR) not in sys.path:
     sys.path.insert(0, str(SRC_DIR))
 
-from climateadapt.agent import PlaceAnalysisOrchestrator  # noqa: E402
+from langgraph.types import Command  # noqa: E402
+from climateadapt.agent.live_place_workflow_v1 import (  # noqa: E402
+    build_live_place_graph,
+    http_json,
+    new_run_id,
+    utc_now,
+)
 from climateadapt.place_analysis import PlaceAnalysisService  # noqa: E402
 
-WORKFLOW_DIR = PROJECT_ROOT / "outputs" / "agent_workflow_v1"
-WORKFLOW_STATE_PATH = WORKFLOW_DIR / "workflow_state.json"
-AGENT_REPORT_PATH = WORKFLOW_DIR / "waimea_monaco_agent_report.json"
-AGENT_REPORT_MARKDOWN = WORKFLOW_DIR / "waimea_monaco_agent_report.md"
-REVIEW_PATH = WORKFLOW_DIR / "human_review_decision.json"
+API_URL = os.getenv("CLIMATEADAPT_API_URL", "http://127.0.0.1:8000").rstrip("/")
+OLLAMA_URL = os.getenv("CLIMATEADAPT_OLLAMA_URL", "http://127.0.0.1:11434").rstrip("/")
+OLLAMA_MODEL = os.getenv("CLIMATEADAPT_OLLAMA_MODEL", "climateadapt-planner:4b")
 
-DEMO_SUMMARY_PATH = (
-    PROJECT_ROOT
-    / "outputs"
-    / "demonstration_v2"
-    / "waimea_monaco_demo_summary_v2.json"
-)
-TEST_METRICS_PATH = (
-    PROJECT_ROOT / "outputs" / "test_v2" / "tahunanui_test_metrics_v2.json"
-)
-VALIDATION_PATH = (
-    PROJECT_ROOT
-    / "outputs"
-    / "validation_v2"
-    / "selected_threshold_v2.json"
-)
+OUTPUTS = PROJECT_ROOT / "outputs"
+FIGURES = PROJECT_ROOT / "evidence" / "figures" / "v3"
+FULL_SUMMARY = OUTPUTS / "full_region_inference_v3" / "nelson_logistic_full_region_summary_v3.json"
+TEST_SUMMARY = OUTPUTS / "test_v3" / "v3_locked_test_summary.json"
+TEST_COMPARISON = OUTPUTS / "test_v3" / "v3_locked_test_model_comparison.csv"
+TEST_AREAS = OUTPUTS / "test_v3" / "v3_locked_test_area_metrics.csv"
+BASELINE_VALIDATION = OUTPUTS / "baselines_v3" / "baseline_validation_comparison_v3.csv"
+TRAINING_HISTORY = OUTPUTS / "training_v3" / "training_history_v3.csv"
+LIVE_OUTPUT_DIR = OUTPUTS / "live_agent_workflow_v1"
 
-DEMO_FIGURE = PROJECT_ROOT / "evidence" / "figures" / "waimea_monaco_demonstration_v2.png"
-TEST_FIGURE = PROJECT_ROOT / "evidence" / "figures" / "tahunanui_test_evaluation_v2.png"
-TEST_CURVES = PROJECT_ROOT / "evidence" / "figures" / "tahunanui_test_evaluation_curves_v2.png"
-VALIDATION_FIGURE = PROJECT_ROOT / "evidence" / "figures" / "validation_threshold_selection_v2.png"
-TRAINING_FIGURE = PROJECT_ROOT / "evidence" / "figures" / "unet_v2_training_curves.png"
-FULL_REGION_FIGURE = (
-    PROJECT_ROOT / "evidence" / "figures" / "nelson_full_region_inference_v2.png"
-)
+FULL_FIGURE = FIGURES / "nelson_full_region_logistic_v3.png"
+SPLIT_FIGURE = FIGURES / "v3_geographic_split.png"
+TILE_FIGURE = FIGURES / "v3_tile_distribution.png"
+BASELINE_FIGURE = FIGURES / "v3_baseline_validation.png"
+TRAINING_FIGURE = FIGURES / "unet_v3_training_curves.png"
+VALIDATION_FIGURE = FIGURES / "validation_threshold_selection_v3.png"
+TEST_FIGURE = FIGURES / "v3_locked_test_evaluation.png"
+TEST_CURVES = FIGURES / "v3_locked_test_curves.png"
 
-
-st.set_page_config(
-    page_title="ClimateAdapt AI",
-    page_icon="🌊",
-    layout="wide",
-    initial_sidebar_state="expanded",
-)
-
+st.set_page_config(page_title="ClimateAdapt AI V3", page_icon="🌊", layout="wide")
 st.markdown(
     """
     <style>
     .block-container {padding-top: 1.5rem; padding-bottom: 3rem; max-width: 1500px;}
-    [data-testid="stMetric"] {
-        background: rgba(18, 68, 89, 0.06);
-        border: 1px solid rgba(18, 68, 89, 0.16);
-        border-radius: 14px;
-        padding: 16px;
-    }
-    .hero {
-        padding: 1.5rem 1.7rem;
-        border-radius: 18px;
-        color: white;
-        background: linear-gradient(120deg, #073b4c 0%, #087f8c 55%, #22a699 100%);
-        margin-bottom: 1rem;
-    }
-    .hero h1 {margin: 0 0 .25rem 0; font-size: 2rem;}
-    .hero p {margin: 0; opacity: .92;}
-    .guardrail {
-        border-left: 5px solid #e09f3e;
-        background: rgba(224, 159, 62, .10);
-        padding: .9rem 1rem;
-        border-radius: 8px;
-    }
-    .agent-card {
-        border: 1px solid rgba(120,120,120,.22);
-        padding: 1rem;
-        border-radius: 12px;
-        min-height: 145px;
-    }
+    [data-testid="stMetric"] {background: rgba(18,68,89,.06); border: 1px solid
+    rgba(18,68,89,.16); border-radius: 14px; padding: 16px;}
+    .hero {padding: 1.5rem 1.7rem; border-radius: 18px; color: white;
+    background: linear-gradient(120deg,#073b4c 0%,#087f8c 55%,#22a699 100%);
+    margin-bottom: 1rem;}
+    .hero h1 {margin: 0 0 .25rem 0; font-size: 2rem;} .hero p {margin:0; opacity:.92;}
+    .guardrail {border-left: 5px solid #e09f3e; background: rgba(224,159,62,.10);
+    padding: .9rem 1rem; border-radius: 8px;}
+    .agent-card {border:1px solid rgba(120,120,120,.22); padding:1rem;
+    border-radius:12px; min-height:145px;}
     </style>
     """,
     unsafe_allow_html=True,
 )
 
 
-def read_json(path: Path, required: bool = False) -> dict:
+def read_json(path: Path) -> dict[str, Any]:
     if not path.exists():
-        if required:
-            st.error(f"Required file is missing: `{path.relative_to(PROJECT_ROOT)}`")
         return {}
     try:
-        with path.open("r", encoding="utf-8") as file:
-            return json.load(file)
-    except (json.JSONDecodeError, OSError) as error:
-        st.error(f"Could not read `{path.name}`: {error}")
+        value = json.loads(path.read_text(encoding="utf-8"))
+        return value if isinstance(value, dict) else {}
+    except (OSError, json.JSONDecodeError):
         return {}
 
 
-def value_or(mapping: dict, key: str, default=0.0):
-    value = mapping.get(key, default)
-    return default if value is None else value
+def read_csv(path: Path) -> pd.DataFrame:
+    if not path.exists():
+        return pd.DataFrame()
+    try:
+        return pd.read_csv(path)
+    except (OSError, pd.errors.ParserError):
+        return pd.DataFrame()
 
 
-def format_number(value, digits: int = 2) -> str:
+def first_value(mapping: dict[str, Any], keys: list[str], default: Any = 0.0) -> Any:
+    for key in keys:
+        if mapping.get(key) is not None:
+            return mapping[key]
+    return default
+
+
+def number(value: Any, digits: int = 3) -> str:
     try:
         return f"{float(value):,.{digits}f}"
     except (TypeError, ValueError):
@@ -127,256 +109,200 @@ def show_image(path: Path, caption: str) -> None:
         st.info(f"Figure not found: `{path.relative_to(PROJECT_ROOT)}`")
 
 
-def download_button_for_file(path: Path, label: str, mime: str) -> None:
+def download(path: Path, label: str, mime: str) -> None:
     if path.exists():
-        st.download_button(
-            label=label,
-            data=path.read_bytes(),
-            file_name=path.name,
-            mime=mime,
-            use_container_width=True,
+        st.download_button(label, path.read_bytes(), path.name, mime, use_container_width=True)
+
+
+def get_interrupt(result: dict[str, Any]) -> dict[str, Any] | None:
+    interrupts = result.get("__interrupt__", ())
+    if not interrupts:
+        return None
+    value = getattr(interrupts[0], "value", interrupts[0])
+    return value if isinstance(value, dict) else {"message": str(value)}
+
+
+def api_state() -> tuple[dict[str, Any], dict[str, Any], str | None]:
+    try:
+        return (
+            http_json(f"{API_URL}/health", timeout=5),
+            http_json(f"{API_URL}/model", timeout=5),
+            None,
         )
+    except Exception as error:
+        return {}, {}, f"{type(error).__name__}: {error}"
 
 
-def status_label(status: str) -> str:
-    mapping = {
-        "human_review_required": "🟠 Human review required",
-        "data_validated": "🟢 Data validated",
-        "susceptibility_analysed": "🟢 Analysis completed",
-        "failed": "🔴 Workflow failed",
-    }
-    return mapping.get(status, f"🔵 {status.replace('_', ' ').title()}")
-
-
-workflow_state = read_json(WORKFLOW_STATE_PATH, required=True)
-agent_report = read_json(AGENT_REPORT_PATH)
-demo_summary = read_json(DEMO_SUMMARY_PATH)
-test_metrics = read_json(TEST_METRICS_PATH)
-validation_record = read_json(VALIDATION_PATH)
-review_record = read_json(REVIEW_PATH)
-
-facts = workflow_state.get("facts", {})
-analysis = facts.get("flood_analysis", agent_report.get("flood_analysis", {}))
-data_validation = facts.get("data_validation", agent_report.get("data_validation", {}))
-recommendations = workflow_state.get(
-    "recommendations", agent_report.get("planning_recommendations", [])
-)
-workflow_status = workflow_state.get("status", "not_run")
-
+full_summary = read_json(FULL_SUMMARY)
+test_summary = read_json(TEST_SUMMARY)
+health, model, api_error = api_state()
 
 with st.sidebar:
     st.title("ClimateAdapt AI")
-    st.caption("Coastal susceptibility planning prototype")
+    st.caption("V3 human-governed susceptibility prototype")
     page = st.radio(
         "Navigation",
-        [
-            "Overview",
-            "Place analysis",
-            "Geospatial evidence",
-            "Agent workflow",
-            "Model evidence",
-            "Human review",
-        ],
+        ["Overview", "Place analysis", "Geospatial evidence", "Agent workflow", "Model evidence", "Human review"],
     )
     st.divider()
-    st.write("**Workflow status**")
-    st.write(status_label(workflow_status))
-    if workflow_state.get("run_id"):
-        st.caption(f"Run ID: {workflow_state['run_id']}")
-    st.divider()
-    if st.button("Run / refresh three agents", use_container_width=True):
-        try:
-            from climateadapt.agent import ClimateAdaptOrchestrator
-
-            with st.spinner("Running the three-agent workflow..."):
-                result = ClimateAdaptOrchestrator(PROJECT_ROOT).run()
-            if result.status == "failed":
-                st.error("The workflow stopped because an agent reported an error.")
-            else:
-                st.success("Workflow refreshed. Human review is required.")
-            st.rerun()
-        except Exception as error:
-            st.error(f"Workflow execution failed: {type(error).__name__}: {error}")
-
+    st.write("**Live services**")
+    if api_error:
+        st.error("V3 prediction API unavailable")
+        st.caption(api_error)
+    else:
+        st.success("V3 prediction API connected")
+        st.caption(f"Model: {model.get('primary_model', 'unknown')}")
+        st.caption(f"Threshold: {number(model.get('operational_threshold'), 4)}")
+    st.caption(f"Planning LLM: {OLLAMA_MODEL}")
 
 st.markdown(
-    """
-    <div class="hero">
-      <h1>ClimateAdapt AI</h1>
-      <p>Human-governed coastal susceptibility screening across the Nelson regional coverage</p>
-    </div>
-    """,
+    """<div class="hero"><h1>ClimateAdapt AI V3</h1>
+    <p>Human-governed coastal susceptibility screening across the Nelson regional coverage</p></div>""",
     unsafe_allow_html=True,
 )
 
-
 if page == "Overview":
-    susceptible_area = value_or(
-        analysis,
-        "susceptible_area_square_kilometres",
-        demo_summary.get("susceptible_area_square_kilometres", 0),
-    )
-    susceptible_percentage = value_or(
-        analysis,
-        "susceptible_percentage",
-        demo_summary.get("susceptible_percentage", 0),
-    )
-    threshold = value_or(
-        analysis,
-        "operational_threshold",
-        demo_summary.get("operational_threshold", 0),
-    )
-    uncertainty_percentage = value_or(
-        analysis, "high_uncertainty_percentage", 0
-    )
-
+    evaluated_area = first_value(full_summary, ["evaluated_area_square_kilometres", "evaluated_land_area_square_kilometres"])
+    susceptible_area = first_value(full_summary, ["susceptible_area_square_kilometres", "susceptible_area_km2"])
+    susceptible_percentage = first_value(full_summary, ["susceptible_percentage", "susceptible_percentage_of_evaluated_land"])
     columns = st.columns(4)
-    columns[0].metric("Susceptible area", f"{format_number(susceptible_area, 3)} km²")
-    columns[1].metric(
-        "Susceptible proportion", f"{format_number(susceptible_percentage, 2)}%"
-    )
-    columns[2].metric("Frozen threshold", format_number(threshold, 2))
-    columns[3].metric(
-        "High-uncertainty cells", f"{format_number(uncertainty_percentage, 2)}%"
-    )
-
-    st.markdown("### Demonstration map")
-    show_image(
-        DEMO_FIGURE,
-        "Label-blind Waimea Inlet / Monaco susceptibility demonstration",
-    )
-
+    columns[0].metric("Evaluated land", f"{number(evaluated_area)} km²")
+    columns[1].metric("Flagged area", f"{number(susceptible_area)} km²")
+    columns[2].metric("Flagged proportion", f"{number(susceptible_percentage, 2)}%")
+    columns[3].metric("Frozen threshold", number(model.get("operational_threshold", .004), 4))
+    st.info("The deployed primary model is V3 logistic regression. Its susceptibility score is an uncalibrated screening score, not a flood probability.")
+    show_image(FULL_FIGURE, "V3 full-region logistic susceptibility screening")
     st.markdown(
-        """
-        <div class="guardrail">
-          <strong>Decision guardrail:</strong> This is a planning-screening prototype,
-          not a validated flood extent, hydrodynamic simulation, regulatory product,
-          or emergency-warning system. Final decisions require qualified human review.
-        </div>
-        """,
+        """<div class="guardrail"><strong>Decision boundary:</strong> This prototype
+        identifies locations for further review. It is not a validated flood extent,
+        hydrodynamic simulation, engineering design, regulatory decision or emergency-warning service.</div>""",
         unsafe_allow_html=True,
     )
 
-    st.markdown("### Priority planning observations")
-    if recommendations:
-        for item in recommendations:
-            st.markdown(
-                f"**{item.get('priority', '•')}. {item.get('action', 'Review')}**  \n"
-                f"{item.get('reason', '')}"
-            )
-    else:
-        st.info("Run the three-agent workflow to generate planning observations.")
-
-
 elif page == "Place analysis":
-    st.subheader("Analyse a Nelson location")
+    st.subheader("Understand susceptibility around a Nelson place")
     st.caption(
-        "This page reads Script 19's precomputed regional rasters. It does not "
-        "rerun the U-Net, retrain the model or change the frozen threshold."
+        "Search for a place, choose an area around it, and receive a mapped V3 "
+        "screening result. The result shows flagged land area—not just one raster cell."
     )
-
     service = PlaceAnalysisService(PROJECT_ROOT)
-    missing_place_files = service.missing_files()
-    if missing_place_files:
-        st.error(
-            "Place analysis is unavailable because required regional files are missing: "
-            + ", ".join(
-                f"`{path.relative_to(PROJECT_ROOT)}`" for path in missing_place_files
-            )
-        )
+    missing_inputs = service.missing_files()
+    if api_error:
+        st.error("Start Script 30 before running the three-agent workflow.")
+    if missing_inputs:
+        st.error("The V3 area-analysis inputs are incomplete.")
+        for missing in missing_inputs:
+            st.code(str(missing.relative_to(PROJECT_ROOT)))
     else:
-        left, right = st.columns([2, 1])
-        with left:
-            place_query = st.text_input(
-                "Place or address",
-                value="Atawhai",
-                help=(
-                    "Atawhai, Nelson CBD, Tāhunanui, Stoke and Monaco work from "
-                    "the offline catalogue. Other places use online geocoding."
-                ),
-            )
-        with right:
-            radius_label = st.selectbox(
-                "Analysis radius",
-                ["500 metres", "1 kilometre", "2 kilometres"],
-                index=1,
-            )
+        first, second, third = st.columns([2, 1, 1])
+        place_query = first.text_input("Place or address", value="Rocks Road")
+        radius_label = second.selectbox(
+            "Area around place",
+            ["500 metres", "1 kilometre", "2 kilometres"],
+            index=1,
+        )
+        reviewer = third.text_input("Reviewer label", value="Prototype reviewer")
         radius_lookup = {
             "500 metres": 500,
             "1 kilometre": 1000,
             "2 kilometres": 2000,
         }
+        radius_metres = radius_lookup[radius_label]
 
-        with st.expander("Manual coordinate fallback"):
-            use_manual_coordinates = st.checkbox(
-                "Use latitude and longitude instead of place-name search"
+        with st.expander("Manual coordinate option"):
+            use_manual = st.checkbox("Use latitude and longitude")
+            c1, c2 = st.columns(2)
+            latitude = c1.number_input(
+                "Latitude", value=-41.2750, format="%.6f", disabled=not use_manual
             )
-            coordinate_columns = st.columns(2)
-            manual_latitude = coordinate_columns[0].number_input(
-                "Latitude", value=-41.2479, format="%.6f", disabled=not use_manual_coordinates
-            )
-            manual_longitude = coordinate_columns[1].number_input(
-                "Longitude", value=173.3277, format="%.6f", disabled=not use_manual_coordinates
+            longitude = c2.number_input(
+                "Longitude", value=173.2690, format="%.6f", disabled=not use_manual
             )
 
-        analyse_clicked = st.button(
-            "Analyse selected place",
+        if st.button(
+            "Analyse area with the three agents",
             type="primary",
             use_container_width=True,
-        )
-        if analyse_clicked:
+            disabled=bool(api_error),
+        ):
             try:
-                with st.spinner("Locating the place and reading regional predictions..."):
+                with st.spinner("Resolving the place and analysing the surrounding land..."):
                     place = service.resolve_place(
                         place_query,
-                        manual_latitude if use_manual_coordinates else None,
-                        manual_longitude if use_manual_coordinates else None,
+                        latitude if use_manual else None,
+                        longitude if use_manual else None,
                     )
-                    place_result = service.analyse(place, radius_lookup[radius_label])
+                    area_result = service.analyse(place, radius_metres)
+                if area_result.get("status") != "analysis_ready":
+                    raise RuntimeError(
+                        area_result.get("reason", "The area could not be analysed.")
+                    )
 
-                if place_result.get("status") != "analysis_ready":
-                    st.session_state.pop("place_analysis_run", None)
-                    st.error(
-                        "Analysis unavailable: "
-                        + place_result.get("reason", "No evaluated data coverage exists.")
-                    )
+                run_id = area_result["run_id"]
+                graph = build_live_place_graph()
+                config = {"configurable": {"thread_id": run_id}}
+                initial = {
+                    "project_root": str(PROJECT_ROOT),
+                    "run_id": run_id,
+                    "started_at_utc": utc_now(),
+                    "location_name": place["display_name"],
+                    "location_request": {
+                        "location_name": place["display_name"],
+                        "latitude": float(place["latitude"]),
+                        "longitude": float(place["longitude"]),
+                    },
+                    "area_result": area_result,
+                    "api_url": API_URL,
+                    "ollama_url": OLLAMA_URL,
+                    "ollama_model": OLLAMA_MODEL,
+                    "status": "created",
+                    "current_agent": "langgraph_orchestrator",
+                    "warnings": [],
+                    "errors": [],
+                    "audit_log": [],
+                    "artifacts": {},
+                    "revision_count": 0,
+                }
+                with st.spinner("Running validation, analysis and planning agents..."):
+                    result = graph.invoke(initial, config=config)
+                st.session_state["v3_live_run"] = {
+                    "graph": graph,
+                    "config": config,
+                    "result": result,
+                    "place": place,
+                    "area_result": area_result,
+                    "reviewer": reviewer,
+                }
+                if result.get("errors") or result.get("status") == "failed":
+                    st.error("The workflow stopped safely because validation failed.")
                 else:
-                    with st.spinner("Running the three place-analysis agents..."):
-                        place_state = PlaceAnalysisOrchestrator(PROJECT_ROOT).run(
-                            place_result
-                        )
-                    st.session_state["place_analysis_run"] = {
-                        "result": place_result,
-                        "state": place_state.to_dict(),
-                    }
-                    if place_state.status == "failed":
-                        st.error("The place-agent workflow reported an error.")
-                    else:
-                        st.success(
-                            "Place analysis completed. The result is awaiting human review."
-                        )
+                    st.success("Area analysis reached the mandatory human-review checkpoint.")
             except Exception as error:
-                st.error(f"Place analysis failed: {type(error).__name__}: {error}")
+                st.session_state.pop("v3_live_run", None)
+                st.error(f"V3 area analysis failed: {type(error).__name__}: {error}")
 
-        active_run = st.session_state.get("place_analysis_run")
-        if active_run:
-            place_result = active_run["result"]
-            place_state = active_run["state"]
-            place_facts = place_state.get("facts", {})
-            place_analysis = place_facts.get("flood_analysis", {})
-            place = place_result["place"]
+        active = st.session_state.get("v3_live_run")
+        if active:
+            result = active["result"]
+            place = active["place"]
+            area_result = active["area_result"]
+            analysis = result.get("analysis", {})
+            planning = result.get("planning_report", {})
+            flagged = int(area_result["susceptible_cells"]) > 0
 
             st.divider()
             st.markdown(f"### {place['display_name']}")
             st.caption(
-                f"Coordinate source: {place['source']} · "
-                f"Latitude {place['latitude']:.6f}, longitude {place['longitude']:.6f} · "
-                f"Run ID: {place_result['run_id']}"
+                f"{area_result['radius_metres']:,} m radius · "
+                f"{place.get('source', 'resolved location')} · "
+                f"Run ID: {result.get('run_id', area_result['run_id'])}"
             )
-
             st.map(
                 pd.DataFrame(
-                    {"lat": [place["latitude"]], "lon": [place["longitude"]]}
+                    {
+                        "lat": [float(place["latitude"])],
+                        "lon": [float(place["longitude"])],
+                    }
                 ),
                 latitude="lat",
                 longitude="lon",
@@ -384,408 +310,267 @@ elif page == "Place analysis":
                 use_container_width=True,
             )
 
+            if flagged:
+                st.warning("Further investigation is recommended for this area.")
+            else:
+                st.info(
+                    "No evaluated land cells crossed the frozen screening threshold "
+                    "in this search area. This does not prove that flood risk is absent."
+                )
+            st.write(area_result["plain_language_summary"])
+
             metrics = st.columns(5)
             metrics[0].metric(
-                "Evaluated land",
-                f"{format_number(place_result['evaluated_land_area_square_kilometres'], 3)} km²",
+                "Land evaluated",
+                f"{number(area_result['evaluated_land_area_square_kilometres'])} km²",
             )
             metrics[1].metric(
-                "Susceptible area",
-                f"{format_number(place_result['susceptible_area_square_kilometres'], 3)} km²",
+                "Flagged land",
+                f"{number(area_result['susceptible_area_square_kilometres'])} km²",
             )
             metrics[2].metric(
-                "Susceptible land",
-                f"{format_number(place_result['susceptible_percentage_of_evaluated_land'], 2)}%",
+                "Flagged proportion",
+                f"{number(area_result['susceptible_percentage_of_evaluated_land'], 1)}%",
             )
             metrics[3].metric(
-                "Mean probability", format_number(place_result["mean_probability"], 3)
+                "Land coverage",
+                f"{number(area_result['evaluated_land_coverage_percentage'], 1)}%",
             )
             metrics[4].metric(
-                "Mean uncertainty", format_number(place_result["mean_uncertainty"], 3)
+                "Frozen threshold",
+                number(area_result["operational_threshold"], 4),
+            )
+            st.warning(
+                "The V3 score is an uncalibrated susceptibility-screening score, "
+                "not a percentage chance of flooding. The threshold only identifies "
+                "land for further review."
             )
 
-            coverage = place_result["search_circle_coverage_percentage"]
-            st.progress(min(max(coverage / 100.0, 0.0), 1.0))
-            st.caption(
-                f"Evaluated-land coverage within the circular search area: {coverage:.2f}%. "
-                "Water and cells without valid model inputs are excluded."
+            local_map = PROJECT_ROOT / area_result["artifacts"]["local_map"]
+            show_image(
+                local_map,
+                "Local V3 evidence: terrain, susceptibility score, flagged land and coast distance",
             )
 
-            local_map_path = PROJECT_ROOT / place_result["artifacts"]["local_map"]
-            show_image(local_map_path, "Local place-based susceptibility screening")
+            with st.expander("Technical score and terrain details"):
+                detail_columns = st.columns(3)
+                detail_columns[0].metric(
+                    "Mean score",
+                    number(area_result["mean_susceptibility_score"], 6),
+                )
+                detail_columns[1].metric(
+                    "Median score",
+                    number(area_result["median_susceptibility_score"], 6),
+                )
+                detail_columns[2].metric(
+                    "Maximum score",
+                    number(area_result["maximum_susceptibility_score"], 6),
+                )
+                terrain_columns = st.columns(3)
+                terrain_columns[0].metric(
+                    "Median elevation",
+                    f"{number(area_result['median_elevation_metres'], 1)} m",
+                )
+                terrain_columns[1].metric(
+                    "Median slope",
+                    f"{number(area_result['median_slope_degrees'], 1)}°",
+                )
+                terrain_columns[2].metric(
+                    "Median coast distance",
+                    f"{number(area_result['median_distance_to_coast_metres'], 0)} m",
+                )
+                st.json(
+                    {
+                        "score_quantiles": area_result["susceptibility_score_quantiles"],
+                        "risk_band_percentages": area_result["risk_band_percentages"],
+                        "leading_land_cover_codes": area_result[
+                            "leading_susceptible_land_cover_codes"
+                        ],
+                    }
+                )
 
             st.markdown("### Three-agent result")
-            agent_columns = st.columns(3)
-            place_agent_details = [
+            cards = [
                 (
                     "1. Data Validation Agent",
-                    "Verified coverage, provenance, alignment and the frozen threshold.",
-                    place_facts.get("data_validation", {}).get("status", "not available"),
+                    "Verified the V3 model, frozen threshold, coverage and provenance.",
+                    result.get("validation_result", {}).get("status", "pending"),
                 ),
                 (
                     "2. Flood Analysis Agent",
-                    "Calculated local susceptibility, probability and uncertainty statistics.",
-                    "completed" if place_analysis else "not available",
+                    "Interpreted flagged area, score distribution and terrain context.",
+                    "completed" if analysis else "pending",
                 ),
                 (
                     "3. Planning Support Agent",
-                    "Created guarded observations and stopped for human review.",
-                    place_state.get("status", "not available"),
+                    "Produced a guarded planning brief and stopped for human review.",
+                    planning.get("status", "pending"),
                 ),
             ]
-            for column, (title, description, status) in zip(
-                agent_columns, place_agent_details
-            ):
-                with column:
-                    st.markdown(
-                        f"<div class='agent-card'><strong>{title}</strong><br><br>"
-                        f"{description}<br><br><em>Status: {status}</em></div>",
-                        unsafe_allow_html=True,
-                    )
-
-            for warning in place_state.get("warnings", []):
-                st.warning(warning)
-
-            st.markdown("### Planning observations")
-            for recommendation in place_state.get("recommendations", []):
-                st.markdown(
-                    f"**{recommendation.get('priority')}. "
-                    f"{recommendation.get('action')}**  \n"
-                    f"{recommendation.get('reason')}"
+            for column, (title, description, status) in zip(st.columns(3), cards):
+                column.markdown(
+                    f"<div class='agent-card'><strong>{title}</strong><br><br>"
+                    f"{description}<br><br><em>Status: {status}</em></div>",
+                    unsafe_allow_html=True,
                 )
 
-            st.markdown(
-                """
-                <div class="guardrail">
-                  <strong>Mandatory guardrail:</strong> This place result is a
-                  screening indicator, not a validated flood extent, engineering
-                  design, regulatory decision or emergency warning. A qualified
-                  human must review the evidence before any action.
-                </div>
-                """,
-                unsafe_allow_html=True,
-            )
+            if planning:
+                st.markdown(f"### {planning.get('headline', 'Planning brief')}")
+                st.write(planning.get("summary", ""))
+                with st.expander("Evidence, actions and limitations"):
+                    for heading, key in [
+                        ("Evidence", "evidence"),
+                        ("Recommended actions", "recommended_actions"),
+                        ("Limitations", "limitations"),
+                    ]:
+                        st.markdown(f"**{heading}**")
+                        for item in planning.get(key, []):
+                            st.markdown(f"- {item}")
 
-            artifacts = place_state.get("artifacts", {})
-            st.markdown("### Download place evidence")
-            download_columns = st.columns(3)
-            with download_columns[0]:
-                if artifacts.get("agent_report_markdown"):
-                    download_button_for_file(
-                        PROJECT_ROOT / artifacts["agent_report_markdown"],
+            for warning in result.get("warnings", []):
+                st.warning(warning)
+            for error in result.get("errors", []):
+                st.error(error)
+
+            checkpoint = get_interrupt(result)
+            if checkpoint:
+                st.markdown("### Human review checkpoint")
+                st.info(checkpoint.get("message", "Human review is required."))
+                with st.form(f"v3_review_{result.get('run_id', 'active')}"):
+                    action = st.selectbox("Decision", ["approve", "revise", "reject"])
+                    notes = st.text_area("Reviewer notes")
+                    acknowledged = st.checkbox(
+                        "I understand this is screening evidence, not a flood "
+                        "probability, validated extent or emergency-warning product."
+                    )
+                    submitted = st.form_submit_button(
+                        "Submit human decision", use_container_width=True
+                    )
+                if submitted:
+                    if not notes.strip() or not acknowledged:
+                        st.error("Provide review notes and acknowledge the limitations.")
+                    else:
+                        try:
+                            with st.spinner("Recording the decision..."):
+                                resumed = active["graph"].invoke(
+                                    Command(
+                                        resume={
+                                            "action": action,
+                                            "reviewer": active["reviewer"],
+                                            "notes": notes.strip(),
+                                        }
+                                    ),
+                                    config=active["config"],
+                                )
+                            active["result"] = resumed
+                            st.session_state["v3_live_run"] = active
+                            st.rerun()
+                        except Exception as error:
+                            st.error(
+                                f"Could not record the review: "
+                                f"{type(error).__name__}: {error}"
+                            )
+            else:
+                if result.get("status") == "failed" or result.get("errors"):
+                    st.error("Workflow stopped safely with status: failed")
+                else:
+                    st.success(
+                        f"Workflow completed with status: "
+                        f"{result.get('status', 'completed')}"
+                    )
+                artifacts = result.get("artifacts", {})
+                downloads = [
+                    (
+                        "planning_report_markdown",
                         "Download planning brief",
                         "text/markdown",
-                    )
-            with download_columns[1]:
-                if artifacts.get("agent_report_json"):
-                    download_button_for_file(
-                        PROJECT_ROOT / artifacts["agent_report_json"],
-                        "Download agent report",
+                    ),
+                    (
+                        "workflow_state",
+                        "Download audit state",
                         "application/json",
-                    )
-            with download_columns[2]:
-                if artifacts.get("analysis_json"):
-                    download_button_for_file(
-                        PROJECT_ROOT / artifacts["analysis_json"],
-                        "Download local statistics",
-                        "application/json",
-                    )
+                    ),
+                ]
+                for column, (key, label, mime) in zip(st.columns(2), downloads):
+                    path = artifacts.get(key)
+                    if path:
+                        with column:
+                            download(PROJECT_ROOT / path, label, mime)
 
-            st.markdown("### Human review checkpoint")
-            with st.form(f"place_review_{place_result['run_id']}"):
-                review_columns = st.columns(2)
-                place_reviewer_role = review_columns[0].selectbox(
-                    "Reviewer role",
-                    [
-                        "Planning reviewer",
-                        "GIS reviewer",
-                        "Engineering reviewer",
-                        "Academic assessor",
-                    ],
-                    key=f"place_role_{place_result['run_id']}",
-                )
-                place_review_reference = review_columns[1].text_input(
-                    "Non-personal review reference",
-                    placeholder="Example: PLACE-REVIEW-001",
-                )
-                place_decision = st.selectbox(
-                    "Decision",
-                    [
-                        "Further investigation approved",
-                        "Changes requested",
-                        "Output rejected",
-                    ],
-                    key=f"place_decision_{place_result['run_id']}",
-                )
-                place_notes = st.text_area(
-                    "Review notes",
-                    placeholder="Record the evidence considered and required follow-up.",
-                )
-                place_acknowledgement = st.checkbox(
-                    "I understand this is not a validated flood extent or emergency-warning product.",
-                    key=f"place_ack_{place_result['run_id']}",
-                )
-                place_submitted = st.form_submit_button(
-                    "Record place review", use_container_width=True
-                )
-
-            if place_submitted:
-                if (
-                    not place_review_reference.strip()
-                    or not place_notes.strip()
-                    or not place_acknowledgement
-                ):
-                    st.error(
-                        "Provide a review reference, notes and the required acknowledgement."
-                    )
-                else:
-                    decision_key = {
-                        "Further investigation approved": "further_investigation_approved",
-                        "Changes requested": "changes_requested",
-                        "Output rejected": "rejected",
-                    }[place_decision]
-                    analysis_path = PROJECT_ROOT / artifacts["analysis_json"]
-                    place_review_path = analysis_path.parent / "human_review_decision.json"
-                    place_review_payload = {
-                        "workflow_run_id": place_result["run_id"],
-                        "area": place["display_name"],
-                        "reviewer_role": place_reviewer_role,
-                        "review_reference": place_review_reference.strip(),
-                        "decision": decision_key,
-                        "notes": place_notes.strip(),
-                        "recorded_at_utc": datetime.now(timezone.utc).isoformat(),
-                        "acknowledged_limitations": True,
-                    }
-                    place_review_path.write_text(
-                        json.dumps(place_review_payload, indent=2), encoding="utf-8"
-                    )
-                    st.success("Place-analysis human-review decision recorded.")
-
+            analysis_json = PROJECT_ROOT / area_result["artifacts"]["analysis_json"]
+            download(
+                analysis_json,
+                "Download complete area-analysis JSON",
+                "application/json",
+            )
 
 elif page == "Geospatial evidence":
-    st.subheader("Full Nelson regional inference")
-    show_image(
-        FULL_REGION_FIGURE,
-        "Precomputed Experiment 2 regional probability, susceptibility and uncertainty",
-    )
-
-    st.subheader("Waimea Inlet / Monaco demonstration")
-    st.caption(
-        "The demonstration is label-blind. It visualises model susceptibility and "
-        "an uncertainty indicator without making an accuracy claim."
-    )
-    show_image(DEMO_FIGURE, "Final weighted-overlap demonstration output")
-
-    st.subheader("Generated geospatial artifacts")
-    artifacts = workflow_state.get("artifacts", {})
-    rows = []
-    for name in ["probability", "binary", "uncertainty", "land_cover"]:
-        relative_path = artifacts.get(name)
-        if relative_path:
-            path = PROJECT_ROOT / relative_path
-            rows.append(
-                {
-                    "Artifact": name.replace("_", " ").title(),
-                    "Path": relative_path,
-                    "Available": path.exists(),
-                }
-            )
-    if rows:
-        st.dataframe(pd.DataFrame(rows), use_container_width=True, hide_index=True)
-
-    st.info(
-        "The entropy layer is a probability-confidence indicator. It is not a "
-        "complete estimate of epistemic or real-world flood uncertainty."
-    )
-
+    st.subheader("V3 full Nelson regional screening")
+    show_image(FULL_FIGURE, "Primary V3 logistic full-region susceptibility output")
+    st.caption("The score raster was generated label-blind with frozen model parameters. Scores are not calibrated probabilities.")
+    tabs = st.tabs(["Geographic split", "Tile distribution", "Locked test"])
+    with tabs[0]: show_image(SPLIT_FIGURE, "Leakage-controlled V3 geographic split")
+    with tabs[1]: show_image(TILE_FIGURE, "V3 train, validation and locked-test tiles")
+    with tabs[2]: show_image(TEST_FIGURE, "Final locked geographic test")
 
 elif page == "Agent workflow":
-    st.subheader("Three-agent orchestration")
-    columns = st.columns(3)
-    agent_details = [
-        (
-            "1. Data Validation Agent",
-            "Checks required files, provenance, EPSG:2193, raster alignment and the frozen threshold.",
-            data_validation.get("status", "not available"),
-        ),
-        (
-            "2. Flood Analysis Agent",
-            "Calculates susceptibility, probability, uncertainty and land-cover statistics.",
-            "completed" if analysis else "not available",
-        ),
-        (
-            "3. Planning Support Agent",
-            "Creates guarded planning observations and stops for human review.",
-            workflow_status,
-        ),
+    st.subheader("V3 LangGraph three-agent workflow")
+    cards = [
+        ("1. Data Validation Agent", "Validates API health, CRS, coverage, model identity, provenance and threshold."),
+        ("2. Flood Analysis Agent", "Interprets the uncalibrated score, threshold, terrain and uncertainty."),
+        ("3. Planning Support Agent", "Calls climateadapt-planner:4b, validates JSON and requires human review."),
     ]
-    for column, (title, description, status) in zip(columns, agent_details):
-        with column:
-            st.markdown(
-                f"<div class='agent-card'><strong>{title}</strong><br><br>"
-                f"{description}<br><br><em>Status: {status}</em></div>",
-                unsafe_allow_html=True,
-            )
-
-    st.subheader("Audit trail")
-    audit_log = workflow_state.get("audit_log", [])
-    if audit_log:
-        audit_frame = pd.DataFrame(audit_log)
-        st.dataframe(audit_frame, use_container_width=True, hide_index=True)
+    for column, (title, description) in zip(st.columns(3), cards):
+        column.markdown(f"<div class='agent-card'><strong>{title}</strong><br><br>{description}</div>", unsafe_allow_html=True)
+    st.markdown("### Implemented stopping condition")
+    st.write("Automation stops after producing a guarded draft. It cannot release the brief or perform a Gitea action without a recorded human decision.")
+    active = st.session_state.get("v3_live_run")
+    if active:
+        audit = active["result"].get("audit_log", [])
+        if audit: st.dataframe(pd.DataFrame(audit), use_container_width=True, hide_index=True)
+        with st.expander("Current workflow state"):
+            st.json({k: v for k, v in active["result"].items() if k != "__interrupt__"})
     else:
-        st.info("No audit events are available.")
-
-    warnings = workflow_state.get("warnings", [])
-    errors = workflow_state.get("errors", [])
-    left, right = st.columns(2)
-    left.metric("Warnings", len(warnings))
-    right.metric("Errors", len(errors))
-    for warning in warnings:
-        st.warning(warning)
-    for error in errors:
-        st.error(error)
-
-    with st.expander("Shared workflow state"):
-        st.json(workflow_state)
-
+        st.info("Run a location from Place analysis to populate the live audit trail.")
 
 elif page == "Model evidence":
-    st.subheader("Experiment 2 evidence")
-    tabs = st.tabs(["Training", "Validation", "Independent test", "Test curves"])
+    st.subheader("V3 model selection and locked-test evidence")
+    st.info("The U-Net beat logistic regression on validation AP (0.7209 vs 0.6619), but frozen logistic regression generalised substantially better on the locked geographic test (AP 0.9509 vs 0.6680). Logistic regression is therefore the deployed V3 model.")
+    tabs = st.tabs(["Baseline validation", "U-Net training", "Thresholds", "Locked test", "Metrics"])
     with tabs[0]:
-        show_image(TRAINING_FIGURE, "Experiment 2 training curves")
+        show_image(BASELINE_FIGURE, "V3 baseline validation")
+        frame = read_csv(BASELINE_VALIDATION)
+        if not frame.empty: st.dataframe(frame, use_container_width=True, hide_index=True)
     with tabs[1]:
-        show_image(VALIDATION_FIGURE, "Rocks Road validation threshold selection")
-        if validation_record:
-            left, right = st.columns(2)
-            left.metric(
-                "Operational threshold",
-                format_number(
-                    validation_record.get(
-                        "operational_threshold",
-                        validation_record.get("selected_threshold"),
-                    ),
-                    2,
-                ),
-            )
-            right.metric(
-                "Dice comparison threshold",
-                format_number(validation_record.get("dice_optimal_threshold"), 2),
-            )
+        show_image(TRAINING_FIGURE, "V3 GroupNorm Compact U-Net training")
+        frame = read_csv(TRAINING_HISTORY)
+        if not frame.empty: st.dataframe(frame, use_container_width=True, hide_index=True)
     with tabs[2]:
-        show_image(TEST_FIGURE, "Independent Tahunanui test evaluation")
-        operational = test_metrics.get("operational_safety_threshold_metrics", {})
-        threshold_free = test_metrics.get("threshold_free_metrics", {})
-        columns = st.columns(4)
-        columns[0].metric("Test Dice", format_number(operational.get("dice"), 3))
-        columns[1].metric(
-            "Test precision", format_number(operational.get("precision"), 3)
-        )
-        columns[2].metric(
-            "Test recall", format_number(operational.get("recall_sensitivity"), 3)
-        )
-        columns[3].metric(
-            "Average precision",
-            format_number(threshold_free.get("average_precision_pr_auc"), 3),
-        )
+        show_image(VALIDATION_FIGURE, "V3 U-Net validation threshold selection")
+        st.caption("U-Net operational threshold: 0.20. Deployed logistic threshold: 0.004. They belong to different models and are not interchangeable.")
     with tabs[3]:
-        show_image(TEST_CURVES, "ROC, precision–recall and calibration evidence")
-
+        show_image(TEST_FIGURE, "V3 locked geographic test evaluation")
+        show_image(TEST_CURVES, "V3 locked-test curves")
+    with tabs[4]:
+        pooled, areas = read_csv(TEST_COMPARISON), read_csv(TEST_AREAS)
+        if not pooled.empty: st.dataframe(pooled, use_container_width=True, hide_index=True)
+        if not areas.empty: st.dataframe(areas, use_container_width=True, hide_index=True)
+        with st.expander("Locked-test summary JSON"): st.json(test_summary)
 
 elif page == "Human review":
-    st.subheader("Human decision checkpoint")
-    st.write(
-        "The agents have completed screening and stopped. A human reviewer may "
-        "record whether the result can proceed to further investigation."
-    )
+    st.subheader("Human decision records")
+    st.write("Approval only permits further investigation. It does not approve engineering, regulation, funding, land-use change, public warning or emergency action.")
+    files = sorted(LIVE_OUTPUT_DIR.glob("workflow_*.json"), key=lambda path: path.stat().st_mtime, reverse=True) if LIVE_OUTPUT_DIR.exists() else []
+    if not files:
+        st.info("No completed live V3 workflow record is available yet.")
+    else:
+        rows = []
+        for path in files[:20]:
+            record, decision = read_json(path), read_json(path).get("human_decision", {})
+            rows.append({"Run ID": record.get("run_id"), "Location": record.get("location_name"), "Status": record.get("status"), "Decision": decision.get("action"), "Reviewer": decision.get("reviewer"), "Recorded UTC": decision.get("reviewed_at_utc"), "File": str(path.relative_to(PROJECT_ROOT))})
+        st.dataframe(pd.DataFrame(rows), use_container_width=True, hide_index=True)
+        selected = st.selectbox("Inspect record", [row["File"] for row in rows])
+        selected_path = PROJECT_ROOT / selected
+        with st.expander("Complete workflow evidence"): st.json(read_json(selected_path))
+        download(selected_path, "Download selected audit record", "application/json")
 
-    if review_record:
-        decision = review_record.get("decision", "not recorded")
-        st.success(f"Current recorded decision: {decision.replace('_', ' ').title()}")
-        st.caption(
-            f"Recorded at {review_record.get('recorded_at_utc', 'unknown time')} "
-            f"by role {review_record.get('reviewer_role', 'unspecified')}"
-        )
-
-    with st.form("human_review_form"):
-        reviewer_role = st.selectbox(
-            "Reviewer role",
-            [
-                "Planning reviewer",
-                "GIS reviewer",
-                "Engineering reviewer",
-                "Academic assessor",
-            ],
-        )
-        review_reference = st.text_input(
-            "Non-personal review reference",
-            placeholder="Example: REVIEW-001",
-        )
-        decision = st.selectbox(
-            "Decision",
-            [
-                "Further investigation approved",
-                "Changes requested",
-                "Output rejected",
-            ],
-        )
-        notes = st.text_area(
-            "Review notes",
-            placeholder="Record the evidence considered and any required follow-up.",
-        )
-        acknowledgement = st.checkbox(
-            "I understand this is not a validated flood extent or emergency-warning product."
-        )
-        submitted = st.form_submit_button(
-            "Record human review", use_container_width=True
-        )
-
-    if submitted:
-        if not review_reference.strip() or not notes.strip() or not acknowledgement:
-            st.error(
-                "Provide a non-personal reference, review notes and the required acknowledgement."
-            )
-        else:
-            decision_key = {
-                "Further investigation approved": "further_investigation_approved",
-                "Changes requested": "changes_requested",
-                "Output rejected": "rejected",
-            }[decision]
-            payload = {
-                "workflow_run_id": workflow_state.get("run_id"),
-                "reviewer_role": reviewer_role,
-                "review_reference": review_reference.strip(),
-                "decision": decision_key,
-                "notes": notes.strip(),
-                "recorded_at_utc": datetime.now(timezone.utc).isoformat(),
-                "acknowledged_limitations": True,
-                "scope": (
-                    "Decision applies only to whether the prototype output may "
-                    "proceed to further investigation."
-                ),
-            }
-            REVIEW_PATH.parent.mkdir(parents=True, exist_ok=True)
-            with REVIEW_PATH.open("w", encoding="utf-8") as file:
-                json.dump(payload, file, indent=2)
-            st.success("Human-review decision recorded.")
-            st.rerun()
-
-    st.subheader("Download evidence")
-    columns = st.columns(3)
-    with columns[0]:
-        download_button_for_file(
-            AGENT_REPORT_MARKDOWN, "Download planning brief", "text/markdown"
-        )
-    with columns[1]:
-        download_button_for_file(
-            AGENT_REPORT_PATH, "Download agent report", "application/json"
-        )
-    with columns[2]:
-        download_button_for_file(
-            WORKFLOW_STATE_PATH, "Download audit state", "application/json"
-        )
-
-    st.warning(
-        "Approval means only that further investigation may proceed. It is not "
-        "approval for construction, land-use change, emergency action or public warning."
-    )

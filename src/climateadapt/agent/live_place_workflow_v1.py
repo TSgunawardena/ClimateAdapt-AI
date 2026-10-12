@@ -1,4 +1,4 @@
-"""Live API + U-Net + fine-tuned LLM workflow orchestrated by LangGraph."""
+"""Live V3 API + fine-tuned LLM workflow orchestrated by LangGraph."""
 
 from __future__ import annotations
 
@@ -12,6 +12,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Annotated, Any
 from typing_extensions import TypedDict
+
+import numpy as np
 
 from langgraph.checkpoint.memory import InMemorySaver
 from langgraph.graph import END, START, StateGraph
@@ -43,7 +45,8 @@ PROHIBITED_ACTIONS = [
 SYSTEM_PROMPT = """You are ClimateAdapt Planning Support, a constrained decision-support assistant.
 Use only the supplied structured evidence. Never invent measurements, accuracy claims, flood depths,
 timings, engineering conclusions, evacuation instructions, funding decisions, land-use approvals or
-emergency warnings. Treat susceptibility as screening evidence, not a validated flood extent.
+emergency warnings. Treat the V3 logistic susceptibility score as an uncalibrated screening
+indicator, not a probability or validated flood extent.
 Return one valid JSON object using the requested schema. A human decision-maker must approve any
 planning, regulatory, engineering, funding, cultural-value, public-safety or emergency action."""
 
@@ -54,6 +57,7 @@ class LiveWorkflowState(TypedDict, total=False):
     started_at_utc: str
     location_name: str
     location_request: dict[str, Any]
+    area_result: dict[str, Any]
     api_url: str
     ollama_url: str
     ollama_model: str
@@ -122,20 +126,48 @@ def data_validation_node(state: LiveWorkflowState) -> dict[str, Any]:
     try:
         health = http_json(f"{state['api_url']}/health", timeout=20)
         model = http_json(f"{state['api_url']}/model", timeout=20)
-        prediction = http_json(
-            f"{state['api_url']}/predict/point",
-            method="POST",
-            payload=state["location_request"],
-            timeout=30,
-        )
-
-        probability = float(prediction["prediction"]["probability"])
-        threshold = float(prediction["prediction"]["operational_threshold"])
-        uncertainty = prediction["prediction"].get(
-            "normalised_predictive_uncertainty"
-        )
-        if not 0.0 <= probability <= 1.0:
-            raise ValueError("Probability is outside [0, 1].")
+        area_result = state.get("area_result")
+        if area_result:
+            if area_result.get("status") != "analysis_ready":
+                raise ValueError(area_result.get("reason", "Area analysis is unavailable."))
+            threshold = float(area_result["operational_threshold"])
+            if area_result.get("model") != "V3 logistic regression":
+                raise ValueError("Area analysis was not produced by V3 logistic regression.")
+            if area_result.get("score_is_calibrated_probability") is not False:
+                raise ValueError("Area analysis omitted the uncalibrated-score warning.")
+            for key in ("flood_target_raster_accessed", "model_retrained", "threshold_modified"):
+                if area_result.get(key) is not False:
+                    raise ValueError(f"Area-analysis provenance check failed for {key}.")
+            if int(area_result.get("evaluated_land_cells", 0)) <= 0:
+                raise ValueError("Area analysis contains no evaluated land cells.")
+            prediction = {
+                "status": "area_screening_ready",
+                "location": area_result["place"],
+                "area_analysis": area_result,
+                "coverage": {
+                    "valid_model_coverage": True,
+                    "evaluated_land_coverage_percentage": area_result.get(
+                        "evaluated_land_coverage_percentage"
+                    ),
+                    "resolution_metres": health.get("grid", {}).get("resolution_metres"),
+                    "crs": area_result.get("crs"),
+                },
+                "limitations": [area_result.get("interpretation_warning")],
+            }
+            uncertainty = None
+        else:
+            prediction = http_json(
+                f"{state['api_url']}/predict/point",
+                method="POST",
+                payload=state["location_request"],
+                timeout=30,
+            )
+            result = prediction["prediction"]
+            score = float(result["susceptibility_score"])
+            threshold = float(result["operational_threshold"])
+            uncertainty = result.get("normalised_predictive_uncertainty")
+            if not 0.0 <= score <= 1.0:
+                raise ValueError("Susceptibility score is outside [0, 1].")
         if not 0.0 < threshold < 1.0:
             raise ValueError("Operational threshold is outside (0, 1).")
         if uncertainty is not None and not 0.0 <= float(uncertainty) <= 1.0:
@@ -146,14 +178,25 @@ def data_validation_node(state: LiveWorkflowState) -> dict[str, Any]:
             raise ValueError(f"Unexpected prediction CRS: {health.get('crs')}")
         if bool(model.get("flood_labels_accessed_during_serving")):
             raise ValueError("Serving provenance indicates flood-label access.")
+        if model.get("primary_model") != "V3 logistic regression":
+            raise ValueError("Prediction service is not serving the frozen V3 logistic model.")
+        if model.get("score_is_calibrated_probability") is not False:
+            raise ValueError("Prediction service omitted the uncalibrated-score warning.")
+        if not np.isclose(
+            threshold, float(model.get("operational_threshold")), atol=1e-12
+        ):
+            raise ValueError("Point result and model endpoint disagree on the threshold.")
 
         validation = {
             "status": "passed",
             "api_healthy": health.get("status") == "healthy",
             "crs_valid": True,
             "valid_model_coverage": True,
-            "probability_range_valid": True,
-            "uncertainty_range_valid": True,
+            "analysis_scope": "radius_area" if area_result else "single_point",
+            "susceptibility_score_range_valid": True,
+            "score_is_calibrated_probability": False,
+            "uncertainty_range_valid": uncertainty is None
+            or 0.0 <= float(uncertainty) <= 1.0,
             "frozen_threshold_confirmed": True,
             "model_retrained": False,
             "threshold_modified": False,
@@ -184,9 +227,64 @@ def route_after_validation(state: LiveWorkflowState) -> str:
 
 def flood_analysis_node(state: LiveWorkflowState) -> dict[str, Any]:
     agent = "flood_analysis_agent"
+    area_result = state.get("area_result")
+    if area_result:
+        flagged_percentage = float(
+            area_result["susceptible_percentage_of_evaluated_land"]
+        )
+        analysis = {
+            "analysis_type": "radius-based regional susceptibility screening",
+            "location": area_result["place"],
+            "radius_metres": area_result["radius_metres"],
+            "operational_threshold": area_result["operational_threshold"],
+            "score_is_calibrated_probability": False,
+            "evaluated_land_cells": area_result["evaluated_land_cells"],
+            "evaluated_land_area_square_kilometres": area_result[
+                "evaluated_land_area_square_kilometres"
+            ],
+            "susceptible_cells": area_result["susceptible_cells"],
+            "susceptible_area_square_kilometres": area_result[
+                "susceptible_area_square_kilometres"
+            ],
+            "susceptible_percentage": flagged_percentage,
+            "mean_susceptibility_score": area_result[
+                "mean_susceptibility_score"
+            ],
+            "median_susceptibility_score": area_result[
+                "median_susceptibility_score"
+            ],
+            "maximum_susceptibility_score": area_result[
+                "maximum_susceptibility_score"
+            ],
+            "risk_band_percentages": area_result["risk_band_percentages"],
+            "terrain_context": {
+                "median_elevation_metres": area_result["median_elevation_metres"],
+                "median_slope_degrees": area_result["median_slope_degrees"],
+                "median_distance_to_coast_metres": area_result[
+                    "median_distance_to_coast_metres"
+                ],
+            },
+            "screening_interpretation": area_result["plain_language_summary"],
+            "human_review_reasons": [
+                f"{flagged_percentage:.2f}% of evaluated land cells meet the frozen threshold",
+                "area-level planning interpretations require authorised review",
+            ],
+            "accuracy_claimed": False,
+            "label_accessed_during_query": False,
+            "limitations": [area_result["interpretation_warning"]],
+        }
+        return {
+            "current_agent": agent,
+            "status": "susceptibility_analysed",
+            "analysis": analysis,
+            "human_review_required": True,
+            "errors": [],
+            "audit_log": [audit(agent, "analyse_verified_area_result", "completed")],
+        }
+
     prediction = state["prediction"]
     result = prediction["prediction"]
-    probability = float(result["probability"])
+    score = float(result["susceptibility_score"])
     threshold = float(result["operational_threshold"])
     uncertainty = result.get("normalised_predictive_uncertainty")
     uncertainty = float(uncertainty) if uncertainty is not None else None
@@ -204,15 +302,16 @@ def flood_analysis_node(state: LiveWorkflowState) -> dict[str, Any]:
         "analysis_type": "single-point regional susceptibility screening",
         "location": prediction["location"],
         "operational_threshold": threshold,
-        "probability": probability,
+        "susceptibility_score": score,
+        "score_is_calibrated_probability": False,
         "susceptible": susceptible,
         "risk_band": result["risk_band"],
         "normalised_predictive_uncertainty": uncertainty,
         "terrain_context": terrain,
         "screening_interpretation": (
-            "The selected cell meets the frozen operational susceptibility threshold."
+            "The selected cell's uncalibrated score meets the frozen operational susceptibility threshold."
             if susceptible
-            else "The selected cell is below the frozen operational susceptibility threshold."
+            else "The selected cell's uncalibrated score is below the frozen operational susceptibility threshold."
         ),
         "human_review_reasons": review_reasons,
         "accuracy_claimed": False,
@@ -250,6 +349,8 @@ def parse_json_object(text: str) -> dict[str, Any] | None:
 
 
 def expected_status(analysis: dict[str, Any]) -> str:
+    if analysis.get("analysis_type") == "radius-based regional susceptibility screening":
+        return "human_review_required"
     uncertainty = analysis.get("normalised_predictive_uncertainty")
     if analysis.get("susceptible") or (
         uncertainty is not None and float(uncertainty) >= 0.80
@@ -280,11 +381,21 @@ def make_llm_prompt(state: LiveWorkflowState) -> str:
         "expected_status": expected_status(state["analysis"]),
         "reviewer_feedback": state.get("human_decision", {}).get("notes", ""),
     }
+    is_area = (
+        state["analysis"].get("analysis_type")
+        == "radius-based regional susceptibility screening"
+    )
+    task_name = "prepare_area_planning_brief" if is_area else "prepare_point_planning_brief"
+    scope_rule = (
+        "Describe only the supplied radius-based area evidence and do not generalise "
+        "beyond the selected radius."
+        if is_area
+        else "Do not convert the point result into an area-wide claim."
+    )
     return (
-        "Task: prepare_point_planning_brief\n\n"
+        f"Task: {task_name}\n\n"
         "Prepare a constrained planning-support response from the evidence below. "
-        "Do not use outside facts. Do not convert a point result into an area-wide "
-        "claim. Return JSON only.\n\n"
+        f"Do not use outside facts. {scope_rule} Return JSON only.\n\n"
         f"Required schema:\n{json.dumps(schema, ensure_ascii=False, indent=2)}\n\n"
         f"Evidence:\n{json.dumps(evidence, ensure_ascii=False, indent=2)}"
     )
@@ -292,17 +403,31 @@ def make_llm_prompt(state: LiveWorkflowState) -> str:
 
 def deterministic_fallback(state: LiveWorkflowState, reason: str) -> dict[str, Any]:
     analysis = state["analysis"]
+    if analysis.get("analysis_type") == "radius-based regional susceptibility screening":
+        evidence = [
+            f"Evaluated land area: {analysis['evaluated_land_area_square_kilometres']:.3f} km².",
+            f"Flagged land area: {analysis['susceptible_area_square_kilometres']:.3f} km².",
+            f"Flagged proportion: {analysis['susceptible_percentage']:.2f}%.",
+            f"Frozen operational threshold: {analysis['operational_threshold']:.4f}.",
+        ]
+    else:
+        evidence = [
+            f"Uncalibrated susceptibility score: {analysis['susceptibility_score']:.6f}.",
+            f"Frozen operational threshold: {analysis['operational_threshold']:.4f}.",
+            f"Risk band: {analysis['risk_band']}.",
+        ]
     return {
         "status": "human_review_required",
         "headline": f"Human review required for {state['location_name']}",
         "summary": analysis["screening_interpretation"],
-        "evidence": [
-            f"Model probability: {analysis['probability']:.4f}.",
-            f"Frozen operational threshold: {analysis['operational_threshold']:.2f}.",
-            f"Risk band: {analysis['risk_band']}.",
-        ],
+        "evidence": evidence,
         "recommended_actions": [
-            "Review the mapped cell with qualified GIS and engineering personnel.",
+            (
+                "Review the mapped area with qualified GIS and engineering personnel."
+                if analysis.get("analysis_type")
+                == "radius-based regional susceptibility screening"
+                else "Review the mapped cell with qualified GIS and engineering personnel."
+            ),
             "Record the reviewer decision before any external use.",
         ],
         "limitations": list(analysis.get("limitations", []))
