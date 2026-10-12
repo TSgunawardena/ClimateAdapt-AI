@@ -1,0 +1,106 @@
+{
+  "status": "ready_for_split_design",
+  "important": "This is a data-based recommendation, not the frozen V3 split.",
+  "context_metres": 750.0,
+  "tile_size_pixels": 128,
+  "stride_pixels": 64,
+  "minimum_context_fraction": 0.2,
+  "areas": [
+    {
+      "coastal_area": "Boulder Bank Glenduan",
+      "area_id": 1,
+      "preferred_role_before_audit": "development_candidate",
+      "availability_rating": "strong",
+      "candidate_positive_tiles": 104,
+      "candidate_negative_tiles": 62,
+      "eligible_for_preferred_role": true,
+      "warnings": []
+    },
+    {
+      "coastal_area": "Delaware Bay estuary",
+      "area_id": 2,
+      "preferred_role_before_audit": "development_candidate",
+      "availability_rating": "strong",
+      "candidate_positive_tiles": 80,
+      "candidate_negative_tiles": 46,
+      "eligible_for_preferred_role": true,
+      "warnings": []
+    },
+    {
+      "coastal_area": "Delaware Open Coast",
+      "area_id": 3,
+      "preferred_role_before_audit": "locked_test_candidate",
+      "availability_rating": "strong",
+      "candidate_positive_tiles": 57,
+      "candidate_negative_tiles": 38,
+      "eligible_for_preferred_role": true,
+      "warnings": []
+    },
+    {
+      "coastal_area": "Nelson CBD",
+      "area_id": 4,
+      "preferred_role_before_audit": "development_candidate",
+      "availability_rating": "strong",
+      "candidate_positive_tiles": 36,
+      "candidate_negative_tiles": 20,
+      "eligible_for_preferred_role": true,
+      "warnings": []
+    },
+    {
+      "coastal_area": "Nelson Haven",
+      "area_id": 5,
+      "preferred_role_before_audit": "development_candidate",
+      "availability_rating": "strong",
+      "candidate_positive_tiles": 66,
+      "candidate_negative_tiles": 36,
+      "eligible_for_preferred_role": true,
+      "warnings": []
+    },
+    {
+      "coastal_area": "Oananga Bay",
+      "area_id": 6,
+      "preferred_role_before_audit": "locked_test_candidate",
+      "availability_rating": "strong",
+      "candidate_positive_tiles": 97,
+      "candidate_negative_tiles": 63,
+      "eligible_for_preferred_role": true,
+      "warnings": []
+    },
+    {
+      "coastal_area": "Rocks Road",
+      "area_id": 7,
+      "preferred_role_before_audit": "validation_candidate",
+      "availability_rating": "limited",
+      "candidate_positive_tiles": 20,
+      "candidate_negative_tiles": 9,
+      "eligible_for_preferred_role": false,
+      "warnings": [
+        "fewer than 15 negative tiles"
+      ]
+    },
+    {
+      "coastal_area": "Tahunanui",
+      "area_id": 8,
+      "preferred_role_before_audit": "development_candidate",
+      "availability_rating": "limited",
+      "candidate_positive_tiles": 43,
+      "candidate_negative_tiles": 9,
+      "eligible_for_preferred_role": false,
+      "warnings": [
+        "fewer than 15 negative tiles"
+      ]
+    },
+    {
+      "coastal_area": "Waimea inlet",
+      "area_id": 9,
+      "preferred_role_before_audit": "development_candidate",
+      "availability_rating": "strong",
+      "candidate_positive_tiles": 66,
+      "candidate_negative_tiles": 29,
+      "eligible_for_preferred_role": true,
+      "warnings": []
+    }
+  ],
+  "blocking_findings": [],
+  "next_action": "Review this audit and explicitly freeze the V3 geographic split before tile creation."
+}

@@ -1,0 +1,26 @@
+{
+  "model": "logistic_regression_v3",
+  "selection_split": "validation",
+  "selection_objective": "maximum F2 score",
+  "selected_threshold": 0.004,
+  "validation_metrics": {
+    "threshold": 0.004,
+    "accuracy": 0.8758091258916403,
+    "balanced_accuracy": 0.9256578499530088,
+    "precision": 0.35588167540685933,
+    "recall": 0.983504035051585,
+    "specificity": 0.8678116648544326,
+    "false_negative_rate": 0.016495964948414987,
+    "f2_score": 0.7270598136326137,
+    "dice": 0.5226441659494231,
+    "iou": 0.35376999494864453,
+    "roc_auc": 0.9512835874453495,
+    "average_precision": 0.6619438472337837,
+    "brier_score": 0.09690811485052109,
+    "true_positive": 52526,
+    "true_negative": 624118,
+    "false_positive": 95068,
+    "false_negative": 881
+  },
+  "test_accessed": false
+}

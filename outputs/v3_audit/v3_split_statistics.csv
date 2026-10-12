@@ -1,0 +1,4 @@
+split_id,split,cells_before_gap,cells_after_gap,cells_removed_by_gap,area_after_gap_km2,official_flood_cells_retained,official_flood_area_retained_km2,flood_percentage
+1,training,983960,959043,24917,23.976075,79027,1.975675,8.240193609671307
+2,validation,804923,772823,32100,19.320575,53407,1.335175,6.910638011549863
+3,testing,735535,723533,12002,18.088325,38366,0.9591500000000001,5.302591588773422

@@ -1,0 +1,12 @@
+feature,coefficient,absolute_coefficient,direction
+elevation,-135.5136,135.5136,decreases predicted susceptibility
+land_cover__shrub_or_scrub,-16.679022,16.679022,decreases predicted susceptibility
+land_cover__wetland,-12.221511,12.221511,decreases predicted susceptibility
+land_cover__agriculture_or_grassland,-10.341174,10.341174,decreases predicted susceptibility
+land_cover__open_water,-9.789131,9.789131,decreases predicted susceptibility
+land_cover__forest_or_woodland,-8.294628,8.294628,decreases predicted susceptibility
+land_cover__bare_rock_sand_or_harvested,-8.07814,8.07814,decreases predicted susceptibility
+land_cover__developed_transport_or_extractive,-7.496094,7.496094,decreases predicted susceptibility
+log1p_distance_to_coast,-0.58861285,0.58861285,decreases predicted susceptibility
+slope,0.5381048,0.5381048,increases predicted susceptibility
+land_cover__unknown_or_unclassified,0.0,0.0,increases predicted susceptibility

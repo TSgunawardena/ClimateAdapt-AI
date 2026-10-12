@@ -1,0 +1,10 @@
+area_id,coastal_area,split_id,split,zone_cells_before_gap,zone_cells_after_gap,official_flood_cells_original,official_flood_cells_retained,official_flood_retained_percentage
+1,Boulder Bank Glenduan,2,validation,442590,420909,35831,23853,66.57084647372388
+2,Delaware Bay estuary,2,validation,362333,351914,33032,29554,89.4708161782514
+3,Delaware Open Coast,3,testing,246538,234536,7705,4850,62.946138870863074
+4,Nelson CBD,1,training,191728,191728,16732,16732,100.0
+5,Nelson Haven,1,training,290624,265707,19297,7866,40.76281287246722
+6,Oananga Bay,3,testing,488997,488997,33516,33516,100.0
+7,Rocks Road,1,training,63675,63675,1923,1923,100.0
+8,Tahunanui,1,training,128029,128029,20210,20210,100.0
+9,Waimea inlet,1,training,309904,309904,32296,32296,100.0

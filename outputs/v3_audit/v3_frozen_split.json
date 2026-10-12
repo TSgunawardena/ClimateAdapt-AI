@@ -1,0 +1,224 @@
+{
+  "experiment": "ClimateAdapt V3",
+  "status": "frozen",
+  "configuration_hash_sha256": "c0bb320649552a105e65bd444d2526517613904f4a597b3d4974b9bd51e0beeb",
+  "configuration": {
+    "version": "v3",
+    "method": "nearest labelled coastal area within valid-land context",
+    "crs": "EPSG:2193",
+    "resolution_metres": 5.0,
+    "context_metres": 750.0,
+    "separation_gap_metres_total": 320.0,
+    "tile_size_pixels": 128,
+    "tile_ground_extent_metres": 640.0,
+    "stride_pixels": 64,
+    "area_assignments": {
+      "1": {
+        "coastal_area": "Boulder Bank Glenduan",
+        "split": "validation",
+        "split_id": 2
+      },
+      "2": {
+        "coastal_area": "Delaware Bay estuary",
+        "split": "validation",
+        "split_id": 2
+      },
+      "3": {
+        "coastal_area": "Delaware Open Coast",
+        "split": "testing",
+        "split_id": 3
+      },
+      "4": {
+        "coastal_area": "Nelson CBD",
+        "split": "training",
+        "split_id": 1
+      },
+      "5": {
+        "coastal_area": "Nelson Haven",
+        "split": "training",
+        "split_id": 1
+      },
+      "6": {
+        "coastal_area": "Oananga Bay",
+        "split": "testing",
+        "split_id": 3
+      },
+      "7": {
+        "coastal_area": "Rocks Road",
+        "split": "training",
+        "split_id": 1
+      },
+      "8": {
+        "coastal_area": "Tahunanui",
+        "split": "training",
+        "split_id": 1
+      },
+      "9": {
+        "coastal_area": "Waimea inlet",
+        "split": "training",
+        "split_id": 1
+      }
+    },
+    "test_policy": {
+      "status": "locked_after_this_script",
+      "allowed_before_final_evaluation": [
+        "define geographic mask",
+        "verify non-empty data availability",
+        "create immutable test tiles"
+      ],
+      "prohibited_before_final_evaluation": [
+        "model selection",
+        "hyperparameter tuning",
+        "checkpoint selection",
+        "threshold selection",
+        "feature engineering based on test performance"
+      ]
+    }
+  },
+  "source_hashes_sha256": {
+    "full_region_metadata.json": "debda147576c17eff07473fd4527bcb06f679242788d04d1631349e915e24656",
+    "flood_area_id_5m.tif": "af1e24b7ec2e0f6d6816b5e09aaf998c189c492bb939d2bd71df52806339a37e",
+    "valid_land_mask_5m.tif": "2c7b584368968156ab5d5243f953f3277d0024e74460a934efce75895f4b458f"
+  },
+  "output_hashes_sha256": {
+    "v3_area_zone_id_5m.tif": "4a8722821f531e9a33052dbb02749e0ce9c0a432ae301370e2663e81f953d9c5",
+    "v3_split_mask_5m.tif": "855b0c15cd6869b1eb8a07dab13ee2e48bbabbe6462e6ed9c9ec10b210762e6d"
+  },
+  "split_statistics": [
+    {
+      "split_id": 1,
+      "split": "training",
+      "cells_before_gap": 983960,
+      "cells_after_gap": 959043,
+      "cells_removed_by_gap": 24917,
+      "area_after_gap_km2": 23.976075,
+      "official_flood_cells_retained": 79027,
+      "official_flood_area_retained_km2": 1.975675,
+      "flood_percentage": 8.240193609671307
+    },
+    {
+      "split_id": 2,
+      "split": "validation",
+      "cells_before_gap": 804923,
+      "cells_after_gap": 772823,
+      "cells_removed_by_gap": 32100,
+      "area_after_gap_km2": 19.320575,
+      "official_flood_cells_retained": 53407,
+      "official_flood_area_retained_km2": 1.335175,
+      "flood_percentage": 6.910638011549863
+    },
+    {
+      "split_id": 3,
+      "split": "testing",
+      "cells_before_gap": 735535,
+      "cells_after_gap": 723533,
+      "cells_removed_by_gap": 12002,
+      "area_after_gap_km2": 18.088325,
+      "official_flood_cells_retained": 38366,
+      "official_flood_area_retained_km2": 0.9591500000000001,
+      "flood_percentage": 5.302591588773422
+    }
+  ],
+  "area_statistics": [
+    {
+      "area_id": 1,
+      "coastal_area": "Boulder Bank Glenduan",
+      "split_id": 2,
+      "split": "validation",
+      "zone_cells_before_gap": 442590,
+      "zone_cells_after_gap": 420909,
+      "official_flood_cells_original": 35831,
+      "official_flood_cells_retained": 23853,
+      "official_flood_retained_percentage": 66.57084647372388
+    },
+    {
+      "area_id": 2,
+      "coastal_area": "Delaware Bay estuary",
+      "split_id": 2,
+      "split": "validation",
+      "zone_cells_before_gap": 362333,
+      "zone_cells_after_gap": 351914,
+      "official_flood_cells_original": 33032,
+      "official_flood_cells_retained": 29554,
+      "official_flood_retained_percentage": 89.4708161782514
+    },
+    {
+      "area_id": 3,
+      "coastal_area": "Delaware Open Coast",
+      "split_id": 3,
+      "split": "testing",
+      "zone_cells_before_gap": 246538,
+      "zone_cells_after_gap": 234536,
+      "official_flood_cells_original": 7705,
+      "official_flood_cells_retained": 4850,
+      "official_flood_retained_percentage": 62.946138870863074
+    },
+    {
+      "area_id": 4,
+      "coastal_area": "Nelson CBD",
+      "split_id": 1,
+      "split": "training",
+      "zone_cells_before_gap": 191728,
+      "zone_cells_after_gap": 191728,
+      "official_flood_cells_original": 16732,
+      "official_flood_cells_retained": 16732,
+      "official_flood_retained_percentage": 100.0
+    },
+    {
+      "area_id": 5,
+      "coastal_area": "Nelson Haven",
+      "split_id": 1,
+      "split": "training",
+      "zone_cells_before_gap": 290624,
+      "zone_cells_after_gap": 265707,
+      "official_flood_cells_original": 19297,
+      "official_flood_cells_retained": 7866,
+      "official_flood_retained_percentage": 40.76281287246722
+    },
+    {
+      "area_id": 6,
+      "coastal_area": "Oananga Bay",
+      "split_id": 3,
+      "split": "testing",
+      "zone_cells_before_gap": 488997,
+      "zone_cells_after_gap": 488997,
+      "official_flood_cells_original": 33516,
+      "official_flood_cells_retained": 33516,
+      "official_flood_retained_percentage": 100.0
+    },
+    {
+      "area_id": 7,
+      "coastal_area": "Rocks Road",
+      "split_id": 1,
+      "split": "training",
+      "zone_cells_before_gap": 63675,
+      "zone_cells_after_gap": 63675,
+      "official_flood_cells_original": 1923,
+      "official_flood_cells_retained": 1923,
+      "official_flood_retained_percentage": 100.0
+    },
+    {
+      "area_id": 8,
+      "coastal_area": "Tahunanui",
+      "split_id": 1,
+      "split": "training",
+      "zone_cells_before_gap": 128029,
+      "zone_cells_after_gap": 128029,
+      "official_flood_cells_original": 20210,
+      "official_flood_cells_retained": 20210,
+      "official_flood_retained_percentage": 100.0
+    },
+    {
+      "area_id": 9,
+      "coastal_area": "Waimea inlet",
+      "split_id": 1,
+      "split": "training",
+      "zone_cells_before_gap": 309904,
+      "zone_cells_after_gap": 309904,
+      "official_flood_cells_original": 32296,
+      "official_flood_cells_retained": 32296,
+      "official_flood_retained_percentage": 100.0
+    }
+  ],
+  "important_note": "Test labels were used only to define and verify the geographic test mask. They are prohibited from model, feature, checkpoint and threshold selection."
+}
