@@ -1,0 +1,28 @@
+metric,value
+experiment,ClimateAdapt V3 frozen logistic full-region inference
+analysis_type,label-blind regional susceptibility screening
+primary_model,logistic regression
+model_tribe,symbolist/statistical linear classifier
+model_path,models\v3\logistic_regression_v3.joblib
+model_retrained,False
+threshold_modified,False
+flood_target_raster_accessed,False
+flood_area_id_raster_accessed,False
+frozen_threshold,0.004
+threshold_source,V3 Boulder Bank and Delaware Bay validation split
+input_channels,11
+normalisation_source,tile metadata
+grid_width,9347
+grid_height,8020
+crs,EPSG:2193
+resolution_metres,5.0
+evaluated_cells,31107322
+evaluated_area_square_kilometres,777.6830500000001
+susceptible_cells,1657479
+susceptible_area_square_kilometres,41.436975000000004
+susceptible_percentage,5.328260015439452
+mean_susceptibility_score,0.025799277893912616
+near_threshold_review_band_0_002_to_0_01_cells,189130
+unknown_land_cover_cells_mapped_to_group_0,0
+processing_time_seconds,19.378148299991153
+interpretation_warning,"The score is an uncalibrated model susceptibility indicator, not a literal flood probability, hydrodynamic depth estimate, emergency warning or regulatory determination."
