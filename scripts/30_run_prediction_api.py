@@ -1,4 +1,4 @@
-"""Serve instant ClimateAdapt point predictions from precomputed Nelson rasters.
+"""Serve instant ClimateAdapt V3 point screening from precomputed rasters.
 
 Run from the ClimateAdapt_AI_Starter project root:
 
@@ -6,9 +6,10 @@ Run from the ClimateAdapt_AI_Starter project root:
 
 Then open http://127.0.0.1:8000/docs for the interactive API documentation.
 
-This service does not rerun the U-Net. It reads the already generated regional
-GeoTIFF products at a requested coordinate, making point queries fast and
-independent of GPU availability.
+This service does not rerun a model. It reads the frozen V3 logistic regional
+GeoTIFF products at a requested coordinate, making queries fast and independent
+of GPU availability. Existing V2 U-Net rasters are returned only as an optional
+comparison when they are available and aligned.
 """
 
 from __future__ import annotations
@@ -28,14 +29,20 @@ from rasterio.windows import Window
 
 
 ROOT = Path(__file__).resolve().parents[1]
-OUTPUT_DIR = ROOT / "outputs" / "full_region_inference_v2"
+OUTPUT_DIR = ROOT / "outputs" / "full_region_inference_v3"
+V2_OUTPUT_DIR = ROOT / "outputs" / "full_region_inference_v2"
 SOURCE_RASTER_DIR = ROOT / "data" / "processed" / "full_region" / "rasters"
 
 RASTER_PATHS = {
-    "probability": OUTPUT_DIR / "nelson_probability_v2.tif",
-    "susceptibility": OUTPUT_DIR / "nelson_susceptibility_v2.tif",
-    "uncertainty": OUTPUT_DIR / "nelson_uncertainty_v2.tif",
-    "coverage": OUTPUT_DIR / "nelson_inference_coverage_v2.tif",
+    "susceptibility_score": OUTPUT_DIR / "nelson_logistic_susceptibility_score_v3.tif",
+    "susceptibility": OUTPUT_DIR / "nelson_logistic_susceptibility_v3.tif",
+    "coverage": OUTPUT_DIR / "nelson_logistic_coverage_v3.tif",
+}
+
+OPTIONAL_V2_COMPARISON_PATHS = {
+    "v2_probability": V2_OUTPUT_DIR / "nelson_probability_v2.tif",
+    "v2_susceptibility": V2_OUTPUT_DIR / "nelson_susceptibility_v2.tif",
+    "v2_uncertainty": V2_OUTPUT_DIR / "nelson_uncertainty_v2.tif",
 }
 
 OPTIONAL_RASTER_CANDIDATES = {
@@ -49,9 +56,13 @@ OPTIONAL_RASTER_CANDIDATES = {
     "valid_land_mask": ["valid_land_mask_5m.tif", "land_mask_5m.tif"],
 }
 
-SUMMARY_PATH = OUTPUT_DIR / "nelson_full_region_summary_v2.json"
-DEFAULT_THRESHOLD = 0.54
+SUMMARY_PATH = OUTPUT_DIR / "nelson_logistic_full_region_summary_v3.json"
+TEST_SUMMARY_PATH = ROOT / "outputs" / "test_v3" / "v3_locked_test_summary.json"
+DEFAULT_THRESHOLD = 0.004
+V2_THRESHOLD = 0.54
 DEFAULT_UNCERTAINTY_REVIEW_THRESHOLD = 0.80
+NEAR_THRESHOLD_LOWER = 0.002
+NEAR_THRESHOLD_UPPER = 0.010
 
 
 class PointPredictionRequest(BaseModel):
@@ -90,7 +101,8 @@ class RasterStore:
     def __init__(self) -> None:
         self.datasets: dict[str, rasterio.io.DatasetReader] = {}
         self.summary: dict[str, Any] = {}
-        self.reference_name = "probability"
+        self.test_summary: dict[str, Any] = {}
+        self.reference_name = "susceptibility_score"
         self.to_wgs84: Transformer | None = None
         self.from_wgs84: Transformer | None = None
 
@@ -108,6 +120,16 @@ class RasterStore:
         for name, path in RASTER_PATHS.items():
             self.datasets[name] = rasterio.open(path)
 
+        for name, path in OPTIONAL_V2_COMPARISON_PATHS.items():
+            if path.exists():
+                candidate = rasterio.open(path)
+                if self._is_aligned(candidate, self.reference):
+                    self.datasets[name] = candidate
+                else:
+                    # An optional historical comparison must never prevent the
+                    # primary V3 service from starting.
+                    candidate.close()
+
         for output_name, candidates in OPTIONAL_RASTER_CANDIDATES.items():
             for filename in candidates:
                 path = SOURCE_RASTER_DIR / filename
@@ -120,6 +142,9 @@ class RasterStore:
         if SUMMARY_PATH.exists():
             with SUMMARY_PATH.open("r", encoding="utf-8") as source:
                 self.summary = json.load(source)
+        if TEST_SUMMARY_PATH.exists():
+            with TEST_SUMMARY_PATH.open("r", encoding="utf-8") as source:
+                self.test_summary = json.load(source)
 
         raster_crs = CRS.from_user_input(self.reference.crs)
         self.to_wgs84 = Transformer.from_crs(raster_crs, "EPSG:4326", always_xy=True)
@@ -134,17 +159,24 @@ class RasterStore:
         reference = self.reference
         mismatches: list[str] = []
         for name, dataset in self.datasets.items():
-            if (
-                dataset.crs != reference.crs
-                or dataset.transform != reference.transform
-                or dataset.width != reference.width
-                or dataset.height != reference.height
-            ):
+            if not self._is_aligned(dataset, reference):
                 mismatches.append(name)
         if mismatches:
             raise RuntimeError(
                 "Raster alignment check failed for: " + ", ".join(sorted(mismatches))
             )
+
+    @staticmethod
+    def _is_aligned(
+        dataset: rasterio.io.DatasetReader,
+        reference: rasterio.io.DatasetReader,
+    ) -> bool:
+        return (
+            dataset.crs == reference.crs
+            and dataset.transform == reference.transform
+            and dataset.width == reference.width
+            and dataset.height == reference.height
+        )
 
     def coordinate_pair(self, request: PointPredictionRequest) -> tuple[float, float, float, float]:
         has_nztm_any = request.easting is not None or request.northing is not None
@@ -205,7 +237,13 @@ class RasterStore:
         if dataset.nodata is not None and np.isclose(numeric, float(dataset.nodata)):
             return None
 
-        if name in {"susceptibility", "coverage", "land_cover_class", "valid_land_mask"}:
+        if name in {
+            "susceptibility",
+            "coverage",
+            "land_cover_class",
+            "valid_land_mask",
+            "v2_susceptibility",
+        }:
             return int(round(numeric))
         return numeric
 
@@ -224,7 +262,7 @@ async def lifespan(_: FastAPI):
 
 app = FastAPI(
     title="ClimateAdapt AI Prediction API",
-    version="1.0.0",
+    version="3.0.0",
     description=(
         "Instant planning-level coastal flood susceptibility queries from the "
         "precomputed Nelson regional raster products."
@@ -262,13 +300,41 @@ def health() -> dict[str, Any]:
 @app.get("/model")
 def model_information() -> dict[str, Any]:
     summary = STORE.summary
+    pooled_metrics = (
+        STORE.test_summary.get("logistic", {}).get("pooled_metrics", {})
+        if isinstance(STORE.test_summary, dict)
+        else {}
+    )
     return {
-        "experiment": summary.get("experiment", "Experiment 2 – GroupNorm Compact U-Net"),
-        "checkpoint": summary.get("checkpoint", "models/climateadapt_unet_v2_best.pt"),
-        "checkpoint_epoch": summary.get("checkpoint_epoch", 4),
-        "operational_threshold": summary.get("operational_threshold", DEFAULT_THRESHOLD),
-        "threshold_source": summary.get("threshold_source", "Rocks Road validation region"),
-        "input_channels": summary.get("input_channels", 25),
+        "experiment": summary.get(
+            "experiment", "ClimateAdapt V3 frozen logistic full-region inference"
+        ),
+        "primary_model": "V3 logistic regression",
+        "model_tribe": summary.get(
+            "model_tribe", "symbolist/statistical linear classifier"
+        ),
+        "model_path": summary.get(
+            "model_path", "models/v3/logistic_regression_v3.joblib"
+        ),
+        "operational_threshold": summary.get("frozen_threshold", DEFAULT_THRESHOLD),
+        "threshold_source": summary.get(
+            "threshold_source", "V3 Boulder Bank and Delaware Bay validation split"
+        ),
+        "input_channels": summary.get("input_channels", 11),
+        "score_is_calibrated_probability": False,
+        "locked_test_metrics": {
+            key: pooled_metrics.get(key)
+            for key in (
+                "average_precision",
+                "precision",
+                "recall",
+                "f2_score",
+                "dice",
+                "balanced_accuracy",
+            )
+            if key in pooled_metrics
+        },
+        "optional_v2_comparison_available": "v2_probability" in STORE.datasets,
         "serving_method": "precomputed aligned GeoTIFF lookup",
         "flood_labels_accessed_during_serving": False,
         "warning": (
@@ -278,14 +344,17 @@ def model_information() -> dict[str, Any]:
     }
 
 
-def risk_band(probability: float, threshold: float) -> str:
-    if probability < 0.35:
+def risk_band(score: float, threshold: float) -> str:
+    """Operational score bands; these are not probability categories."""
+    lower_review = min(NEAR_THRESHOLD_LOWER, threshold)
+    upper_review = max(NEAR_THRESHOLD_UPPER, threshold)
+    if score < lower_review:
         return "lower_indicator"
-    if probability < threshold:
-        return "review_band"
-    if probability < 0.75:
+    if score < threshold:
+        return "review_below_threshold"
+    if score < upper_review:
         return "operational_susceptibility"
-    return "high_indicator"
+    return "elevated_susceptibility_score"
 
 
 @app.post("/predict/point")
@@ -294,12 +363,11 @@ def predict_point(request: PointPredictionRequest) -> dict[str, Any]:
     row, column = STORE.pixel_location(easting, northing)
 
     coverage = STORE.read_value("coverage", row, column)
-    probability = STORE.read_value("probability", row, column)
+    score = STORE.read_value("susceptibility_score", row, column)
     susceptibility = STORE.read_value("susceptibility", row, column)
-    uncertainty = STORE.read_value("uncertainty", row, column)
     valid_land = STORE.read_value("valid_land_mask", row, column)
 
-    if coverage in {None, 0} or probability is None:
+    if coverage in {None, 0} or score is None:
         raise HTTPException(
             status_code=404,
             detail=(
@@ -310,10 +378,9 @@ def predict_point(request: PointPredictionRequest) -> dict[str, Any]:
     if valid_land == 0:
         raise HTTPException(status_code=404, detail="The requested coordinate is not valid land.")
 
-    probability = float(probability)
-    uncertainty_value = float(uncertainty) if uncertainty is not None else None
-    threshold = float(STORE.summary.get("operational_threshold", DEFAULT_THRESHOLD))
-    binary_value = bool(int(susceptibility)) if susceptibility is not None else probability >= threshold
+    score = float(score)
+    threshold = float(STORE.summary.get("frozen_threshold", DEFAULT_THRESHOLD))
+    binary_value = bool(int(susceptibility)) if susceptibility is not None else score >= threshold
 
     terrain = {
         "elevation_metres": STORE.read_value("elevation_metres", row, column),
@@ -324,12 +391,32 @@ def predict_point(request: PointPredictionRequest) -> dict[str, Any]:
         "land_cover_class": STORE.read_value("land_cover_class", row, column),
     }
 
-    band = risk_band(probability, threshold)
+    band = risk_band(score, threshold)
     review_reasons: list[str] = []
-    if band == "review_band":
-        review_reasons.append("probability is close to the operational threshold")
-    if uncertainty_value is not None and uncertainty_value >= DEFAULT_UNCERTAINTY_REVIEW_THRESHOLD:
-        review_reasons.append("normalised predictive uncertainty is high")
+    if NEAR_THRESHOLD_LOWER <= score < NEAR_THRESHOLD_UPPER:
+        review_reasons.append(
+            "susceptibility score is in the predeclared near-threshold review band"
+        )
+
+    comparison = None
+    v2_probability = STORE.read_value("v2_probability", row, column)
+    if v2_probability is not None:
+        v2_binary = STORE.read_value("v2_susceptibility", row, column)
+        v2_uncertainty = STORE.read_value("v2_uncertainty", row, column)
+        comparison = {
+            "model": "GroupNorm Compact U-Net V2",
+            "probability": float(v2_probability),
+            "operational_threshold": V2_THRESHOLD,
+            "susceptible": (
+                bool(int(v2_binary))
+                if v2_binary is not None
+                else float(v2_probability) >= V2_THRESHOLD
+            ),
+            "normalised_predictive_uncertainty": (
+                float(v2_uncertainty) if v2_uncertainty is not None else None
+            ),
+            "role": "historical optional comparison; not the primary V3 result",
+        }
 
     return {
         "status": "human_review_required" if review_reasons else "screening_result_ready",
@@ -340,12 +427,18 @@ def predict_point(request: PointPredictionRequest) -> dict[str, Any]:
             "grid": {"row": row, "column": column},
         },
         "prediction": {
-            "probability": probability,
+            "susceptibility_score": score,
+            "score_is_calibrated_probability": False,
+            # Temporary compatibility alias for the existing V1 agent/dashboard.
+            # Downstream V3 code should read susceptibility_score instead.
+            "probability": score,
+            "probability_field_deprecated": True,
             "operational_threshold": threshold,
             "susceptible": binary_value,
             "risk_band": band,
-            "normalised_predictive_uncertainty": uncertainty_value,
+            "normalised_predictive_uncertainty": None,
         },
+        "comparison": comparison,
         "terrain_context": terrain,
         "coverage": {
             "valid_model_coverage": True,
@@ -357,17 +450,23 @@ def predict_point(request: PointPredictionRequest) -> dict[str, Any]:
             "reasons": review_reasons,
         },
         "provenance": {
-            "model": "GroupNorm Compact U-Net V2",
-            "checkpoint_epoch": STORE.summary.get("checkpoint_epoch", 4),
+            "model": "V3 logistic regression",
+            "model_path": STORE.summary.get(
+                "model_path", "models/v3/logistic_regression_v3.joblib"
+            ),
+            "model_tribe": "symbolist/statistical linear classifier",
             "threshold_source": STORE.summary.get(
-                "threshold_source", "Rocks Road validation region"
+                "threshold_source",
+                "V3 Boulder Bank and Delaware Bay validation split",
             ),
             "serving_method": "precomputed regional raster lookup",
             "model_retrained": False,
             "threshold_modified": False,
+            "flood_labels_accessed_during_serving": False,
         },
         "limitations": [
             "Planning-level susceptibility screening only.",
+            "The susceptibility score is not a literal or calibrated flood probability.",
             "Not a hydrodynamic flood-depth or flood-velocity simulation.",
             "Not an emergency-warning, regulatory, or engineering-design product.",
             "GIS, engineering, community and human review remain required.",
