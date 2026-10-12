@@ -108,16 +108,17 @@ def build_issue_body(state: GiteaWorkflowState) -> str:
         f"**Reviewer:** {decision.get('reviewer', 'not recorded')}  ",
         f"**Reviewed at:** {decision.get('reviewed_at_utc', 'not recorded')}",
         "",
-        "## Verified prediction",
+        "## Verified V3 screening result",
         "",
-        f"- Probability: {float(prediction['probability']):.4f}",
-        f"- Frozen operational threshold: {float(prediction['operational_threshold']):.2f}",
+        (
+            "- Uncalibrated susceptibility score: "
+            f"{float(prediction['susceptibility_score']):.6f}"
+        ),
+        "- Score is a calibrated flood probability: No",
+        f"- Frozen operational threshold: {float(prediction['operational_threshold']):.4f}",
         f"- Susceptible: {bool(prediction['susceptible'])}",
         f"- Risk band: {prediction['risk_band']}",
-        (
-            "- Normalised predictive uncertainty: "
-            f"{prediction.get('normalised_predictive_uncertainty')}"
-        ),
+        "- Primary model: V3 logistic regression",
         f"- NZTM2000 coordinate: {location['nztm2000']}",
         f"- WGS84 coordinate: {location['wgs84']}",
         "",

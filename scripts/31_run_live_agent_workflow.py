@@ -104,7 +104,7 @@ def main() -> None:
     }
 
     print("\n" + "=" * 78)
-    print("CLIMATEADAPT AI – LIVE THREE-AGENT LANGGRAPH WORKFLOW")
+    print("CLIMATEADAPT AI V3 – LIVE THREE-AGENT LANGGRAPH WORKFLOW")
     print("=" * 78)
     print(f"Run ID:        {run_id}")
     print(f"Location:      {arguments.name}")

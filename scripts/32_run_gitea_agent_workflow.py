@@ -103,7 +103,7 @@ def main() -> None:
     graph = build_gitea_place_graph()
 
     print("\n" + "=" * 78)
-    print("CLIMATEADAPT AI – LANGGRAPH + VERIFIED GITEA WORKFLOW")
+    print("CLIMATEADAPT AI V3 – LANGGRAPH + VERIFIED GITEA WORKFLOW")
     print("=" * 78)
     print(f"Run ID:       {run_id}")
     print(f"Location:     {arguments.name}")
