@@ -69,3 +69,20 @@ outputs/**/*.tiff
 # Streamlit local secrets
 .streamlit/secrets.toml
 
+
+# Local staging and backup files
+script*_stage/
+dashboard/*_backup.py
+scripts/*_backup.py
+
+# Generated interactive workflow runs
+outputs/gitea_agent_workflow_v1/gitea_evidence_*.json
+outputs/gitea_agent_workflow_v1/planning_brief_*.md
+outputs/gitea_agent_workflow_v1/workflow_*.json
+outputs/live_agent_workflow_v1/planning_brief_*.json
+outputs/live_agent_workflow_v1/planning_brief_*.md
+outputs/live_agent_workflow_v1/workflow_*.json
+
+# Generated local place-analysis runs
+outputs/place_analysis_v1/
+outputs/place_analysis_v3/
