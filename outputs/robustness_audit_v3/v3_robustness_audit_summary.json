@@ -1,0 +1,21 @@
+{
+  "audit": "ClimateAdapt V3 non-destructive robustness and safe-failure audit",
+  "primary_model": "V3 logistic regression",
+  "operational_threshold": 0.004,
+  "score_semantics": "uncalibrated susceptibility score; not flood probability",
+  "status": "passed",
+  "tests": 18,
+  "passed": 18,
+  "failed": 0,
+  "gitea_write_operations_performed": 0,
+  "model_weights_modified": false,
+  "threshold_modified": false,
+  "secrets_written_to_outputs": false,
+  "processing_time_seconds": 2.562119099951815,
+  "failed_test_ids": [],
+  "interpretation": "All tested boundaries failed safely and required services were available.",
+  "outputs": {
+    "results_csv": "outputs\\robustness_audit_v3\\v3_robustness_test_results.csv",
+    "figure": "evidence\\figures\\v3\\v3_robustness_audit.png"
+  }
+}
