@@ -1,0 +1,12 @@
+feature,display_name,coefficient,absolute_coefficient,mean_feature_value,mean_logit_contribution,mean_absolute_logit_contribution,direction
+elevation,elevation,-135.5136,135.5136,2.045878,-277.63318,299.23096,decreases fitted susceptibility score
+land_cover__shrub_or_scrub,LC: shrub or scrub,-16.679022,16.679022,0.34110785,-5.6969604,5.6969604,decreases fitted susceptibility score
+land_cover__forest_or_woodland,LC: forest or woodland,-8.294628,8.294628,0.4938537,-4.0831313,4.0831313,decreases fitted susceptibility score
+land_cover__agriculture_or_grassland,LC: agriculture or grassland,-10.341174,10.341174,0.12525696,-1.2938763,1.2938763,decreases fitted susceptibility score
+slope,slope,0.5381048,0.5381048,1.9809921,1.0661869,1.1318171,increases fitted susceptibility score
+log1p_distance_to_coast,log1p distance to coast,-0.58861285,0.58861285,-0.068702005,0.040444117,0.39884722,decreases fitted susceptibility score
+land_cover__bare_rock_sand_or_harvested,LC: bare rock sand or harvested,-8.07814,8.07814,0.023993116,-0.19381942,0.19381942,decreases fitted susceptibility score
+land_cover__open_water,LC: open water,-9.789131,9.789131,0.009808072,-0.09601186,0.09601186,decreases fitted susceptibility score
+land_cover__wetland,LC: wetland,-12.221511,12.221511,0.0053273463,-0.06510879,0.06510879,decreases fitted susceptibility score
+land_cover__unknown_or_unclassified,LC: unknown or unclassified,0.0,0.0,0.0006529492,0.0,0.0,increases fitted susceptibility score
+land_cover__developed_transport_or_extractive,LC: developed transport or extractive,-7.496094,7.496094,0.0,0.0,0.0,decreases fitted susceptibility score

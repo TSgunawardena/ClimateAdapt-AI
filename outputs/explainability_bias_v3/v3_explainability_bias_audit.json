@@ -1,0 +1,238 @@
+{
+  "experiment": "ClimateAdapt V3 deployed logistic explainability and data-bias audit",
+  "audit_type": "post-hoc; no tuning or model selection",
+  "model": "V3 logistic regression",
+  "model_tribe": "symbolist/statistical linear classifier",
+  "model_sha256": "78b7c54b245ddbf9247cb480d0336f347eeee67c2aa63cea7ed3a630455657b9",
+  "operational_threshold": 0.004,
+  "model_intercept": -74.8188705444336,
+  "threshold_source": "V3 validation split (Boulder Bank and Delaware Bay)",
+  "test_data_status": "already unlocked by Script 44; reused for audit only",
+  "test_regions": [
+    "Delaware Open Coast",
+    "Oananga Bay"
+  ],
+  "unique_test_pixels": 722874,
+  "overlapping_duplicate_pixels_merged": 2042273,
+  "positive_test_pixels": 38321,
+  "pooled_precision": 0.8182562332691755,
+  "pooled_recall": 0.9651627045223246,
+  "pooled_average_precision": 0.9509410574958637,
+  "strongest_mean_absolute_logit_contribution": {
+    "feature": "elevation",
+    "value": 299.23095703125,
+    "coefficient": -135.5135955810547
+  },
+  "explainability_method": {
+    "name": "exact linear logit decomposition",
+    "equivalent_role": "transparent-model attribution equivalent for the fitted logistic classifier",
+    "calculation": "model intercept plus the sum of feature value multiplied by fitted coefficient",
+    "proves": "how encoded features contribute to this fitted model's logit",
+    "does_not_prove": [
+      "causation",
+      "physical flood mechanism",
+      "feature independence",
+      "future generalisation",
+      "absence of bias"
+    ]
+  },
+  "subgroup_audit": {
+    "scope": "environmental and spatial data-bias audit; not demographic fairness",
+    "group_types": [
+      "geography",
+      "elevation_band",
+      "slope_band",
+      "coast_distance_band",
+      "land_cover_group"
+    ],
+    "minimum_pixels_for_range": 1000,
+    "minimum_positive_pixels_for_range": 100,
+    "recall_range_review_trigger": 0.2,
+    "precision_range_review_trigger": 0.2,
+    "ranges": [
+      {
+        "group_type": "geography",
+        "metric": "recall",
+        "eligible_groups": 2,
+        "minimum": 0.9637004089674318,
+        "maximum": 0.9753214433844878,
+        "range": 0.011621034417055975
+      },
+      {
+        "group_type": "geography",
+        "metric": "precision",
+        "eligible_groups": 2,
+        "minimum": 0.8144251873155226,
+        "maximum": 0.8455591513843941,
+        "range": 0.031133964068871478
+      },
+      {
+        "group_type": "geography",
+        "metric": "false_negative_rate",
+        "eligible_groups": 2,
+        "minimum": 0.024678556615512236,
+        "maximum": 0.036299591032568135,
+        "range": 0.011621034417055899
+      },
+      {
+        "group_type": "geography",
+        "metric": "average_precision",
+        "eligible_groups": 2,
+        "minimum": 0.9364672179135404,
+        "maximum": 0.9544089780962453,
+        "range": 0.01794176018270488
+      },
+      {
+        "group_type": "elevation_band",
+        "metric": "recall",
+        "eligible_groups": 3,
+        "minimum": 0.15,
+        "maximum": 1.0,
+        "range": 0.85
+      },
+      {
+        "group_type": "elevation_band",
+        "metric": "precision",
+        "eligible_groups": 3,
+        "minimum": 0.0641025641025641,
+        "maximum": 0.9899702507437315,
+        "range": 0.9258676866411674
+      },
+      {
+        "group_type": "elevation_band",
+        "metric": "false_negative_rate",
+        "eligible_groups": 3,
+        "minimum": 0.0,
+        "maximum": 0.85,
+        "range": 0.85
+      },
+      {
+        "group_type": "elevation_band",
+        "metric": "average_precision",
+        "eligible_groups": 3,
+        "minimum": 0.05280112629101293,
+        "maximum": 0.960848439126166,
+        "range": 0.908047312835153
+      },
+      {
+        "group_type": "slope_band",
+        "metric": "recall",
+        "eligible_groups": 4,
+        "minimum": 0.85424739195231,
+        "maximum": 0.9791929382093316,
+        "range": 0.12494554625702159
+      },
+      {
+        "group_type": "slope_band",
+        "metric": "precision",
+        "eligible_groups": 4,
+        "minimum": 0.6407332886206125,
+        "maximum": 0.8790566037735849,
+        "range": 0.23832331515297234
+      },
+      {
+        "group_type": "slope_band",
+        "metric": "false_negative_rate",
+        "eligible_groups": 4,
+        "minimum": 0.02080706179066835,
+        "maximum": 0.14575260804769002,
+        "range": 0.12494554625702167
+      },
+      {
+        "group_type": "slope_band",
+        "metric": "average_precision",
+        "eligible_groups": 4,
+        "minimum": 0.7723456581884962,
+        "maximum": 0.9771739065602278,
+        "range": 0.20482824837173164
+      },
+      {
+        "group_type": "coast_distance_band",
+        "metric": "recall",
+        "eligible_groups": 3,
+        "minimum": 0.9565965395202517,
+        "maximum": 0.9807416513009629,
+        "range": 0.024145111780711215
+      },
+      {
+        "group_type": "coast_distance_band",
+        "metric": "precision",
+        "eligible_groups": 3,
+        "minimum": 0.5537945395650162,
+        "maximum": 0.9053330477618333,
+        "range": 0.3515385081968171
+      },
+      {
+        "group_type": "coast_distance_band",
+        "metric": "false_negative_rate",
+        "eligible_groups": 3,
+        "minimum": 0.019258348699037083,
+        "maximum": 0.04340346047974833,
+        "range": 0.024145111780711246
+      },
+      {
+        "group_type": "coast_distance_band",
+        "metric": "average_precision",
+        "eligible_groups": 3,
+        "minimum": 0.9359122319774527,
+        "maximum": 0.9943456596846045,
+        "range": 0.058433427707151875
+      },
+      {
+        "group_type": "land_cover_group",
+        "metric": "recall",
+        "eligible_groups": 6,
+        "minimum": 0.7887788778877888,
+        "maximum": 1.0,
+        "range": 0.21122112211221122
+      },
+      {
+        "group_type": "land_cover_group",
+        "metric": "precision",
+        "eligible_groups": 6,
+        "minimum": 0.6772892295280355,
+        "maximum": 0.9967458970005659,
+        "range": 0.31945666747253043
+      },
+      {
+        "group_type": "land_cover_group",
+        "metric": "false_negative_rate",
+        "eligible_groups": 6,
+        "minimum": 0.0,
+        "maximum": 0.21122112211221122,
+        "range": 0.21122112211221122
+      },
+      {
+        "group_type": "land_cover_group",
+        "metric": "average_precision",
+        "eligible_groups": 6,
+        "minimum": 0.9173086124975999,
+        "maximum": 0.9999991740258525,
+        "range": 0.0826905615282526
+      }
+    ]
+  },
+  "warnings": [
+    "elevation_band recall range is 0.8500, above the predeclared 0.20 review trigger.",
+    "elevation_band precision range is 0.9259, above the predeclared 0.20 review trigger.",
+    "slope_band precision range is 0.2383, above the predeclared 0.20 review trigger.",
+    "coast_distance_band precision range is 0.3515, above the predeclared 0.20 review trigger.",
+    "land_cover_group recall range is 0.2112, above the predeclared 0.20 review trigger.",
+    "land_cover_group precision range is 0.3195, above the predeclared 0.20 review trigger.",
+    "3 subgroup(s) were descriptive only because they had fewer than 1,000 pixels or 100 positives."
+  ],
+  "locked_test_summary_sha256": "7a07f5c24bfdae4e1a7ef8100f392e96695eba3f72a79bdec90838b7644d7e75",
+  "no_model_weights_changed": true,
+  "no_threshold_changed": true,
+  "no_split_changed": true,
+  "no_feature_engineering_changed": true,
+  "no_retraining_performed": true,
+  "test_results_used_for_tuning": false,
+  "processing_time_seconds": 5.736327500024345,
+  "artifacts": {
+    "attribution_csv": "outputs\\explainability_bias_v3\\v3_logistic_exact_attribution.csv",
+    "subgroup_csv": "outputs\\explainability_bias_v3\\v3_environmental_subgroup_metrics.csv",
+    "range_csv": "outputs\\explainability_bias_v3\\v3_subgroup_performance_ranges.csv",
+    "figure": "evidence\\figures\\v3\\v3_logistic_explainability_bias_audit.png"
+  }
+}
