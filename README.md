@@ -317,3 +317,23 @@ calibration, hydrodynamic integration, monitored data pipelines, security and
 privacy controls, model and data drift monitoring, operational ownership,
 incident response, accessibility review, stakeholder consultation, and formal
 governance.
+
+## Trained planning-language model
+
+The Planning Support Agent uses `climateadapt-planner:4b`, a QLoRA-adapted Qwen3-4B model exported to GGUF with Q4_K_M quantisation and served locally through Ollama.
+
+The approximately 2.5 GB GGUF is excluded from Git because of its size. The separately supplied release contains the trained model, portable Ollama `Modelfile`, authentic Unsloth training notebook, model card, reproducibility guide, installation instructions and SHA-256 checksums.
+
+**University OneDrive model release:** `[LINK TO BE ADDED BEFORE SUBMISSION]`
+
+Inspectable repository resources:
+
+- Training notebook: `notebooks/28_finetune_qwen3_4b_qlora_colab.ipynb`
+- Model card: `docs/model_cards/climateadapt_planner_4b.md`
+- Reproducibility guide: `docs/LLM_REPRODUCIBILITY.md`
+- Release-packaging script: `scripts/53_prepare_language_model_release.py`
+- Instruction dataset: `data/instruction/`
+- Fine-tuning evidence: `outputs/language_finetuning_v1/`
+- Held-out comparison: `outputs/language_model_comparison_v1/`
+
+The supplied model remains a research prototype. It generates constrained planning language from verified ClimateAdapt evidence, but every planning interpretation requires authorised human review.
