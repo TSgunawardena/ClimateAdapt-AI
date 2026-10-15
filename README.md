@@ -13,6 +13,20 @@ extent of a future flood.
 The prototype is **not** a hydrodynamic model, engineering design tool,
 regulatory decision system, or emergency-warning service.
 
+> [!IMPORTANT]
+> This repository contains the complete inspectable source code,
+> configuration, notebooks, documentation, and small evaluation evidence.
+> Large runtime artefacts are intentionally excluded from Git, including the
+> fine-tuned GGUF language model, the deployed V3 logistic-regression binary,
+> and GeoTIFF raster layers. **Cloning this repository alone is sufficient for
+> code inspection, but not for running prediction or place analysis.**
+>
+> To run the prediction API, Streamlit dashboard, and three-agent workflow,
+> download `ClimateAdapt_AI_Complete_Runtime_V3` from the university OneDrive
+> link in [External runtime package](#external-runtime-package), then copy its
+> `data`, `models`, and `outputs` directories into the cloned repository
+> without changing their structure.
+
 ## Final V3 system
 
 - Produces 5 m coastal-flood susceptibility screening from elevation, slope,
@@ -228,13 +242,82 @@ pip install -r requirements.txt
 PyTorch with CUDA is optional but useful for U-Net training. The deployed V3
 logistic service reads precomputed rasters and does not require a GPU.
 
-## Required local services
+## External runtime package
 
-1. Ollama with `climateadapt-planner:4b`
-2. Gitea with a private repository and Issues enabled
-3. The ClimateAdapt prediction API
+The source repository deliberately excludes large model and raster files.
+Download the complete runtime package before starting the API or dashboard:
 
-Configure Gitea in the terminal used for the Gitea workflow:
+**University OneDrive V3 runtime package:**
+`[LINK TO COMPLETE V3 RUNTIME PACKAGE – ADD BEFORE SUBMISSION]`
+
+Package name:
+
+```text
+ClimateAdapt_AI_Complete_Runtime_V3
+```
+
+The package contains:
+
+- the deployed V3 logistic-regression model;
+- the Q4_K_M fine-tuned Qwen3 4B GGUF and Ollama `Modelfile`;
+- V3 feature and full-region metadata;
+- elevation, slope, coast-distance, land-cover, and valid-land rasters;
+- frozen V3 susceptibility-score, binary-susceptibility, and coverage rasters;
+- V2 compatibility rasters currently exposed by the API; and
+- SHA-256 checksums for download-integrity verification.
+
+After downloading, copy these package directories into the root of the cloned
+repository and allow the folders to merge:
+
+```text
+data/
+models/
+outputs/
+```
+
+Do not rename the supplied files or change their relative paths. The runtime
+package contains no password, API key, Gitea token, GitHub credential, or
+private environment configuration.
+
+Confirm the main files are present:
+
+```powershell
+Get-Item `
+  .\models\v3\logistic_regression_v3.joblib, `
+  .\models\language\climateadapt_qwen3_4b\ClimateAdapt-Qwen3-4B-Q4_K_M.gguf, `
+  .\outputs\full_region_inference_v3\nelson_logistic_susceptibility_score_v3.tif
+```
+
+Register the planning model in Ollama:
+
+```powershell
+ollama create climateadapt-planner:4b `
+  -f .\models\language\climateadapt_qwen3_4b\Modelfile
+
+ollama list
+```
+
+## Execution modes and local services
+
+### Core demonstration — Gitea not required
+
+The prediction API, Streamlit place analysis, three agents, fine-tuned planning
+model, human-review checkpoint, and local JSON/Markdown evidence can run
+without Gitea. Core mode requires:
+
+1. the external V3 runtime package installed in the repository;
+2. Ollama with `climateadapt-planner:4b`; and
+3. the ClimateAdapt prediction API.
+
+### Complete assessed workflow — Gitea required
+
+Gitea is required only for the final approved issue-publication action and its
+independent verification. Without Gitea, the publication workflow must fail
+safely; this does not prevent the core prediction and human-review workflow
+from running.
+
+For complete mode, run Gitea with a private repository and Issues enabled, then
+configure it in the terminal used for the Gitea workflow:
 
 ```powershell
 $env:CLIMATEADAPT_GITEA_URL   = "http://127.0.0.1:3000"
@@ -251,7 +334,9 @@ workflow evidence.
 
 ## Run the prototype
 
-Start the V3 prediction API:
+### Core mode
+
+Start the V3 prediction API in the first terminal:
 
 ```powershell
 python .\scripts\30_run_prediction_api.py
@@ -259,7 +344,7 @@ python .\scripts\30_run_prediction_api.py
 
 Open the API documentation at `http://127.0.0.1:8000/docs`.
 
-In a second terminal, start the Streamlit interface:
+In the second terminal, start the Streamlit interface:
 
 ```powershell
 streamlit run .\dashboard\app.py
@@ -272,6 +357,11 @@ python .\scripts\31_run_live_agent_workflow.py `
   --latlon -41.29 173.24 `
   --name "Nelson V3 example"
 ```
+
+Script 31 pauses for approve, revise, or reject and saves local workflow
+evidence. It does not require Gitea.
+
+### Complete Gitea mode
 
 Run the human-approved and independently verified Gitea workflow:
 
@@ -288,21 +378,27 @@ python .\scripts\32_run_gitea_agent_workflow.py `
 python .\scripts\46_test_prediction_api_v3.py
 python .\scripts\47_test_v3_agent_integration.py
 python .\scripts\49_test_v3_area_analysis.py
-python .\scripts\34_run_robustness_audit.py
-python .\scripts\35_evaluate_composed_system.py
+python .\scripts\50_audit_v3_logistic_explainability_bias.py
+python .\scripts\51_run_v3_robustness_audit.py
+python .\scripts\52_evaluate_v3_composed_system.py
 ```
 
-The recorded robustness audit completed 17/17 predefined checks. The repeated
-composed-system evaluation passed 9/9 cases, respected the human boundary, and
-performed no Gitea mutation during the non-destructive audit.
+The recorded V3 robustness audit completed 18/18 predefined checks. The V3
+repeated composed-system evaluation passed 9/9 cases, accepted the LLM output
+on all 6 normal runs, retained complete three-agent traces, respected the human
+boundary, and performed no Gitea mutation during the non-destructive audit.
+Scripts 51 and 52 require the API and Ollama; their complete checks also require
+read-only access to a running Gitea repository.
 
 ## Data and model files
 
 Raw LINZ/NCC/LCDB datasets, processed GeoTIFFs, and trained model binaries are
 excluded from Git because of size, licensing, provenance, and security
-considerations. Reproduce or place them according to the data documentation and
-numbered pipeline scripts. Do not commit tokens, `.env` files, local secrets,
-raw licensed data, or large model binaries.
+considerations. The OneDrive runtime package supplies only the artefacts needed
+to operate the assessed prototype; it does not distribute every raw source
+dataset or all training tiles. Reproduce training data according to the data
+documentation and numbered pipeline scripts. Do not commit tokens, `.env`
+files, local secrets, raw licensed data, or large model binaries.
 
 ## Responsible-use boundary
 
@@ -324,7 +420,12 @@ The Planning Support Agent uses `climateadapt-planner:4b`, a QLoRA-adapted Qwen3
 
 The approximately 2.5 GB GGUF is excluded from Git because of its size. The separately supplied release contains the trained model, portable Ollama `Modelfile`, authentic Unsloth training notebook, model card, reproducibility guide, installation instructions and SHA-256 checksums.
 
-**University OneDrive model release:** `[LINK TO BE ADDED BEFORE SUBMISSION]`
+**University OneDrive standalone model release:**
+`[LINK TO STANDALONE MODEL RELEASE – ADD BEFORE SUBMISSION]`
+
+The complete V3 runtime package linked earlier also contains the GGUF and
+`Modelfile`. The standalone model release is retained for direct inspection of
+the LLM code, provenance, documentation, and checksums.
 
 Inspectable repository resources:
 
