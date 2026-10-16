@@ -18,3 +18,4 @@ python-multipart>=0.0.9
 # Install PyTorch later using the command recommended by pytorch.org for your CPU/GPU.
 
 langgraph>=1.2,<2
+cryptography==50.0.2
