@@ -1,0 +1,15 @@
+{
+  "experiment": "ClimateAdapt V3 controlled asset-tamper detection v1",
+  "tested_at_utc": "2026-10-17T04:18:06.843215+00:00",
+  "status": "passed",
+  "signature_verified_before_test": true,
+  "tested_asset": "outputs/test_v3/v3_locked_test_summary.json",
+  "test_used_temporary_copy": true,
+  "expected_sha256": "7a07f5c24bfdae4e1a7ef8100f392e96695eba3f72a79bdec90838b7644d7e75",
+  "tampered_copy_sha256": "50c456fe0d136b604ea57cee149b6876fa6af0bec498d8a3ab16c89aba835241",
+  "tamper_detected": true,
+  "original_asset_unchanged": true,
+  "temporary_copy_removed": true,
+  "private_key_accessed": false,
+  "secret_values_in_evidence": 0
+}

@@ -1,0 +1,25 @@
+{
+  "experiment": "ClimateAdapt IT8527 Ed25519 asset signing v1",
+  "created_at_utc": "2026-10-17T04:08:26.413196+00:00",
+  "digest_algorithm": "SHA-256",
+  "signature_algorithm": "Ed25519",
+  "private_key_format": "Encrypted PKCS#8",
+  "public_key_sha256": "878d1422fae2ab7de9f522ca7f4dc7010d77a67bfc2979eef979341b1c490c11",
+  "asset_count": 11,
+  "total_bytes": 245973988,
+  "manifest_sha256": "62ce010930066ccfc7cc97d91c3a6cd9b0d586558071a4bf15a25406c7afebd8",
+  "signature_length_bytes": 64,
+  "signature_encoding": "Base64",
+  "signature_self_verified": true,
+  "all_assets_present": true,
+  "password_recorded": false,
+  "private_key_recorded": false,
+  "private_key_committed_to_git": false,
+  "secret_values_in_evidence": 0,
+  "outputs": {
+    "public_key": "security\\public\\signing\\climateadapt_artifact_signing_v1_public.pem",
+    "manifest": "security\\manifests\\climateadapt_v3_asset_manifest_v1.json",
+    "signature": "security\\manifests\\climateadapt_v3_asset_manifest_v1.sig",
+    "private_key": "Stored locally under security/private/ and excluded from Git"
+  }
+}

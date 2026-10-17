@@ -1,0 +1,140 @@
+{
+  "experiment": "ClimateAdapt V3 independent signed-asset verification v1",
+  "verified_at_utc": "2026-10-17T04:16:15.246352+00:00",
+  "status": "passed",
+  "manifest": "security/manifests/climateadapt_v3_asset_manifest_v1.json",
+  "signature": "security/manifests/climateadapt_v3_asset_manifest_v1.sig",
+  "public_key": "security/public/signing/climateadapt_artifact_signing_v1_public.pem",
+  "digest_algorithm": "SHA-256",
+  "signature_algorithm": "Ed25519",
+  "signature_verified": true,
+  "assets_declared": 11,
+  "assets_verified": 11,
+  "missing_assets": [],
+  "mismatched_assets": [],
+  "private_key_accessed": false,
+  "secret_values_in_evidence": 0,
+  "asset_results": [
+    {
+      "path": "models/v3/logistic_regression_v3.joblib",
+      "exists": true,
+      "expected_sha256": "78b7c54b245ddbf9247cb480d0336f347eeee67c2aa63cea7ed3a630455657b9",
+      "actual_sha256": "78b7c54b245ddbf9247cb480d0336f347eeee67c2aa63cea7ed3a630455657b9",
+      "hash_matches": true,
+      "expected_size_bytes": 1428,
+      "actual_size_bytes": 1428,
+      "size_matches": true,
+      "verified": true
+    },
+    {
+      "path": "outputs/full_region_inference_v3/nelson_logistic_susceptibility_score_v3.tif",
+      "exists": true,
+      "expected_sha256": "635c1c22f32606d3cc9fcd73c981b62174e60441bc0e6f12d54362541265d46a",
+      "actual_sha256": "635c1c22f32606d3cc9fcd73c981b62174e60441bc0e6f12d54362541265d46a",
+      "hash_matches": true,
+      "expected_size_bytes": 19101711,
+      "actual_size_bytes": 19101711,
+      "size_matches": true,
+      "verified": true
+    },
+    {
+      "path": "outputs/full_region_inference_v3/nelson_logistic_susceptibility_v3.tif",
+      "exists": true,
+      "expected_sha256": "ee3d91c2496fee59e78c293c6ebcf5f1ba862c81414b98bdf265021e9605ca7b",
+      "actual_sha256": "ee3d91c2496fee59e78c293c6ebcf5f1ba862c81414b98bdf265021e9605ca7b",
+      "hash_matches": true,
+      "expected_size_bytes": 281653,
+      "actual_size_bytes": 281653,
+      "size_matches": true,
+      "verified": true
+    },
+    {
+      "path": "outputs/full_region_inference_v3/nelson_logistic_coverage_v3.tif",
+      "exists": true,
+      "expected_sha256": "4c16c0116094a9e05b3e6b39e55c306e9f1b5290608fcbd81b399ecd55d27daf",
+      "actual_sha256": "4c16c0116094a9e05b3e6b39e55c306e9f1b5290608fcbd81b399ecd55d27daf",
+      "hash_matches": true,
+      "expected_size_bytes": 210863,
+      "actual_size_bytes": 210863,
+      "size_matches": true,
+      "verified": true
+    },
+    {
+      "path": "outputs/full_region_inference_v3/nelson_logistic_full_region_summary_v3.json",
+      "exists": true,
+      "expected_sha256": "43027c6f5a4bdfc27abee7e20072dd474aaa7a9afbbf32a445556f9cdc7883be",
+      "actual_sha256": "43027c6f5a4bdfc27abee7e20072dd474aaa7a9afbbf32a445556f9cdc7883be",
+      "hash_matches": true,
+      "expected_size_bytes": 3133,
+      "actual_size_bytes": 3133,
+      "size_matches": true,
+      "verified": true
+    },
+    {
+      "path": "outputs/test_v3/v3_locked_test_summary.json",
+      "exists": true,
+      "expected_sha256": "7a07f5c24bfdae4e1a7ef8100f392e96695eba3f72a79bdec90838b7644d7e75",
+      "actual_sha256": "7a07f5c24bfdae4e1a7ef8100f392e96695eba3f72a79bdec90838b7644d7e75",
+      "hash_matches": true,
+      "expected_size_bytes": 9709,
+      "actual_size_bytes": 9709,
+      "size_matches": true,
+      "verified": true
+    },
+    {
+      "path": "data/processed/full_region/rasters/elevation_5m.tif",
+      "exists": true,
+      "expected_sha256": "8aeb33d3e634296232145db1284d355eed3e9885120a5cce9a3b0abf0f04ddb4",
+      "actual_sha256": "8aeb33d3e634296232145db1284d355eed3e9885120a5cce9a3b0abf0f04ddb4",
+      "hash_matches": true,
+      "expected_size_bytes": 88201510,
+      "actual_size_bytes": 88201510,
+      "size_matches": true,
+      "verified": true
+    },
+    {
+      "path": "data/processed/full_region/rasters/slope_degrees_5m.tif",
+      "exists": true,
+      "expected_sha256": "c38c384a2c15a23ccc7f1dd0043f3aa9739a3ad6d79735ad4e189fd54aa17e3f",
+      "actual_sha256": "c38c384a2c15a23ccc7f1dd0043f3aa9739a3ad6d79735ad4e189fd54aa17e3f",
+      "hash_matches": true,
+      "expected_size_bytes": 109957031,
+      "actual_size_bytes": 109957031,
+      "size_matches": true,
+      "verified": true
+    },
+    {
+      "path": "data/processed/full_region/rasters/distance_to_coast_5m.tif",
+      "exists": true,
+      "expected_sha256": "f90cdb338e29b764d6ebfd561a363408e451b29decc1b496e742525d4ce2d9b2",
+      "actual_sha256": "f90cdb338e29b764d6ebfd561a363408e451b29decc1b496e742525d4ce2d9b2",
+      "hash_matches": true,
+      "expected_size_bytes": 26763337,
+      "actual_size_bytes": 26763337,
+      "size_matches": true,
+      "verified": true
+    },
+    {
+      "path": "data/processed/full_region/rasters/land_cover_class_5m.tif",
+      "exists": true,
+      "expected_sha256": "24b6ea5f8c2f10f7dd44dca7b74e8a063bea8ee98777a7d800a992725b7ed424",
+      "actual_sha256": "24b6ea5f8c2f10f7dd44dca7b74e8a063bea8ee98777a7d800a992725b7ed424",
+      "hash_matches": true,
+      "expected_size_bytes": 1197753,
+      "actual_size_bytes": 1197753,
+      "size_matches": true,
+      "verified": true
+    },
+    {
+      "path": "data/processed/full_region/rasters/valid_land_mask_5m.tif",
+      "exists": true,
+      "expected_sha256": "2c7b584368968156ab5d5243f953f3277d0024e74460a934efce75895f4b458f",
+      "actual_sha256": "2c7b584368968156ab5d5243f953f3277d0024e74460a934efce75895f4b458f",
+      "hash_matches": true,
+      "expected_size_bytes": 245860,
+      "actual_size_bytes": 245860,
+      "size_matches": true,
+      "verified": true
+    }
+  ]
+}

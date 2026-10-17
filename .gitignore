@@ -95,3 +95,6 @@ security/runtime/
 *.jks
 *.keystore
 *.srl
+
+# Public artifact-signing verification keys
+!security/public/signing/*.pem

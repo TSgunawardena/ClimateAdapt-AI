@@ -1,0 +1,79 @@
+﻿{
+  "policy_version": 1,
+  "policy_name": "ClimateAdapt V3 Serving-Asset Integrity Policy",
+  "purpose": "Detect unauthorized modification or replacement of the deployed V3 model, serving rasters and supporting metadata.",
+  "digest_algorithm": "SHA-256",
+  "signature_algorithm": "Ed25519",
+  "signing_key": {
+    "algorithm": "Ed25519",
+    "private_key_format": "Encrypted PKCS#8",
+    "private_key_path": "security/private/signing/climateadapt_artifact_signing_v1.key",
+    "public_key_path": "security/public/signing/climateadapt_artifact_signing_v1_public.pem",
+    "private_key_must_not_be_committed": true,
+    "password_must_not_be_recorded": true
+  },
+  "manifest": {
+    "path": "security/manifests/climateadapt_v3_asset_manifest_v1.json",
+    "signature_path": "security/manifests/climateadapt_v3_asset_manifest_v1.sig",
+    "canonical_encoding": "UTF-8 JSON with sorted keys and compact separators",
+    "signature_encoding": "Base64"
+  },
+  "protected_assets": [
+    {
+      "path": "models/v3/logistic_regression_v3.joblib",
+      "role": "Frozen deployed V3 logistic-regression model"
+    },
+    {
+      "path": "outputs/full_region_inference_v3/nelson_logistic_susceptibility_score_v3.tif",
+      "role": "Primary uncalibrated susceptibility-score raster"
+    },
+    {
+      "path": "outputs/full_region_inference_v3/nelson_logistic_susceptibility_v3.tif",
+      "role": "Frozen thresholded susceptibility raster"
+    },
+    {
+      "path": "outputs/full_region_inference_v3/nelson_logistic_coverage_v3.tif",
+      "role": "Valid model-coverage raster"
+    },
+    {
+      "path": "outputs/full_region_inference_v3/nelson_logistic_full_region_summary_v3.json",
+      "role": "Serving metadata and frozen operational threshold"
+    },
+    {
+      "path": "outputs/test_v3/v3_locked_test_summary.json",
+      "role": "Locked geographic test evidence exposed by the model endpoint"
+    },
+    {
+      "path": "data/processed/full_region/rasters/elevation_5m.tif",
+      "role": "Elevation context raster"
+    },
+    {
+      "path": "data/processed/full_region/rasters/slope_degrees_5m.tif",
+      "role": "Slope context raster"
+    },
+    {
+      "path": "data/processed/full_region/rasters/distance_to_coast_5m.tif",
+      "role": "Distance-to-coast context raster"
+    },
+    {
+      "path": "data/processed/full_region/rasters/land_cover_class_5m.tif",
+      "role": "Land-cover context raster"
+    },
+    {
+      "path": "data/processed/full_region/rasters/valid_land_mask_5m.tif",
+      "role": "Valid-land context mask"
+    }
+  ],
+  "verification_policy": {
+    "verify_signature_before_trusting_hashes": true,
+    "recalculate_every_sha256_digest": true,
+    "fail_closed_on_missing_asset": true,
+    "fail_closed_on_digest_mismatch": true,
+    "fail_closed_on_invalid_signature": true
+  },
+  "outputs": {
+    "generation_evidence": "outputs/security_assessment_v1/artifact_signing_generation_evidence_v1.json",
+    "verification_evidence": "outputs/security_assessment_v1/artifact_integrity_verification_v1.json"
+  },
+  "scope_note": "The U-Net checkpoints and optional V2 comparison rasters are not part of the deployed primary V3 serving path."
+}
