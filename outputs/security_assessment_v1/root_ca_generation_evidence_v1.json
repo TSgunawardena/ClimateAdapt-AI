@@ -1,0 +1,28 @@
+{
+  "experiment": "ClimateAdapt IT8527 self-managed root CA v1",
+  "generated_at_utc": "2026-10-17T01:10:56.235309+00:00",
+  "policy_file": "configs/security/root_ca_policy.json",
+  "policy_sha256": "be087b435809263c4427d5fabcb9a1147f49806a49996cdd002ced2f46c814d0",
+  "key_algorithm": "RSA",
+  "key_size_bits": 3072,
+  "public_exponent": 65537,
+  "private_key_format": "Encrypted PKCS#8",
+  "private_key_location": "security/private/ca/climateadapt_root_ca_v1.key",
+  "private_key_committed_to_git": false,
+  "password_recorded": false,
+  "certificate_location": "security/public/certificates/climateadapt_root_ca_v1.crt",
+  "certificate_sha256": "5c4bbcff2f5cf2a341a835b3b3cb0cd1bbcd3a83349adc60ddb0a97a5f41b07f",
+  "subject": "CN=ClimateAdapt Local Root CA v1,OU=IT8527 Security Assessment,O=ClimateAdapt AI Prototype,C=NZ",
+  "issuer": "CN=ClimateAdapt Local Root CA v1,OU=IT8527 Security Assessment,O=ClimateAdapt AI Prototype,C=NZ",
+  "serial_number_hex": "74A1E54934DBA26D4242386019BC52EEFB1D88BC",
+  "signature_hash": "sha256",
+  "sha256_fingerprint": "AF:69:E9:49:29:2A:50:02:46:80:DF:AF:3A:1E:60:7E:26:E1:79:B7:8D:BC:94:F5:21:3C:59:0B:0D:C6:61:62",
+  "not_valid_before_utc": "2026-10-17T01:05:56+00:00",
+  "not_valid_after_utc": "2031-10-16T01:10:56+00:00",
+  "basic_constraints": {
+    "ca": true,
+    "path_length": 0
+  },
+  "self_signature_verified": true,
+  "secret_values_in_evidence": 0
+}
