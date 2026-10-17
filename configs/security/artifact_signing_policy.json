@@ -1,5 +1,5 @@
-﻿{
-  "policy_version": 1,
+{
+  "policy_version": 2,
   "policy_name": "ClimateAdapt V3 Serving-Asset Integrity Policy",
   "purpose": "Detect unauthorized modification or replacement of the deployed V3 model, serving rasters and supporting metadata.",
   "digest_algorithm": "SHA-256",
@@ -7,14 +7,14 @@
   "signing_key": {
     "algorithm": "Ed25519",
     "private_key_format": "Encrypted PKCS#8",
-    "private_key_path": "security/private/signing/climateadapt_artifact_signing_v1.key",
-    "public_key_path": "security/public/signing/climateadapt_artifact_signing_v1_public.pem",
+    "private_key_path": "security/private/signing/climateadapt_artifact_signing_v2.key",
+    "public_key_path": "security/public/signing/climateadapt_artifact_signing_v2_public.pem",
     "private_key_must_not_be_committed": true,
     "password_must_not_be_recorded": true
   },
   "manifest": {
-    "path": "security/manifests/climateadapt_v3_asset_manifest_v1.json",
-    "signature_path": "security/manifests/climateadapt_v3_asset_manifest_v1.sig",
+    "path": "security/manifests/climateadapt_v3_asset_manifest_v2.json",
+    "signature_path": "security/manifests/climateadapt_v3_asset_manifest_v2.sig",
     "canonical_encoding": "UTF-8 JSON with sorted keys and compact separators",
     "signature_encoding": "Base64"
   },
@@ -69,11 +69,21 @@
     "recalculate_every_sha256_digest": true,
     "fail_closed_on_missing_asset": true,
     "fail_closed_on_digest_mismatch": true,
-    "fail_closed_on_invalid_signature": true
+    "fail_closed_on_invalid_signature": true,
+    "active_signing_key_version": "v2"
   },
   "outputs": {
     "generation_evidence": "outputs/security_assessment_v1/artifact_signing_generation_evidence_v1.json",
-    "verification_evidence": "outputs/security_assessment_v1/artifact_integrity_verification_v1.json"
+    "verification_evidence": "outputs/security_assessment_v1/artifact_manifest_verification_evidence_v1.json"
   },
-  "scope_note": "The U-Net checkpoints and optional V2 comparison rasters are not part of the deployed primary V3 serving path."
+  "scope_note": "The U-Net checkpoints and optional V2 comparison rasters are not part of the deployed primary V3 serving path.",
+  "key_lifecycle": {
+    "current_key_version": "v2",
+    "current_key_status": "active",
+    "previous_key_version": "v1",
+    "previous_key_status": "retired_from_active_signing",
+    "previous_public_key_retained": true,
+    "previous_private_key_accessed_during_rotation": false,
+    "rotation_policy": "configs/security/artifact_signing_key_rotation_v2.json"
+  }
 }

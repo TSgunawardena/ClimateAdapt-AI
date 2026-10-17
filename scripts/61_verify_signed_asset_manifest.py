@@ -20,14 +20,14 @@ MANIFEST_PATH = (
     PROJECT_ROOT
     / "security"
     / "manifests"
-    / "climateadapt_v3_asset_manifest_v1.json"
+    / "climateadapt_v3_asset_manifest_v2.json"
 )
 
 SIGNATURE_PATH = (
     PROJECT_ROOT
     / "security"
     / "manifests"
-    / "climateadapt_v3_asset_manifest_v1.sig"
+    / "climateadapt_v3_asset_manifest_v2.sig"
 )
 
 PUBLIC_KEY_PATH = (
@@ -35,7 +35,7 @@ PUBLIC_KEY_PATH = (
     / "security"
     / "public"
     / "signing"
-    / "climateadapt_artifact_signing_v1_public.pem"
+    / "climateadapt_artifact_signing_v2_public.pem"
 )
 
 EVIDENCE_PATH = (

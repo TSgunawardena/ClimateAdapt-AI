@@ -1,0 +1,39 @@
+{
+  "rotation_policy_version": 1,
+  "rotation_name": "ClimateAdapt V3 Ed25519 signing-key rotation V1 to V2",
+  "rotation_reason": "Demonstrate the documented signing-key lifecycle, limit long-term key exposure and satisfy the IT8527 key-rotation requirement.",
+  "algorithm": "Ed25519",
+  "digest_algorithm": "SHA-256",
+  "previous_key": {
+    "version": "v1",
+    "final_status": "retired_from_active_signing",
+    "private_key_path": "security/private/signing/climateadapt_artifact_signing_v1.key",
+    "public_key_path": "security/public/signing/climateadapt_artifact_signing_v1_public.pem",
+    "manifest_path": "security/manifests/climateadapt_v3_asset_manifest_v1.json",
+    "signature_path": "security/manifests/climateadapt_v3_asset_manifest_v1.sig",
+    "private_key_access_during_rotation": false,
+    "public_key_retained_for_historical_verification": true
+  },
+  "replacement_key": {
+    "version": "v2",
+    "initial_status": "generated_pending_activation",
+    "final_status": "active",
+    "private_key_format": "Encrypted PKCS#8",
+    "private_key_path": "security/private/signing/climateadapt_artifact_signing_v2.key",
+    "public_key_path": "security/public/signing/climateadapt_artifact_signing_v2_public.pem",
+    "manifest_path": "security/manifests/climateadapt_v3_asset_manifest_v2.json",
+    "signature_path": "security/manifests/climateadapt_v3_asset_manifest_v2.sig",
+    "private_key_must_not_be_committed": true,
+    "password_must_not_be_recorded": true
+  },
+  "source_asset_policy": "configs/security/artifact_signing_policy.json",
+  "rotation_evidence": "outputs/security_assessment_v1/artifact_signing_key_rotation_v2.json",
+  "requirements": {
+    "previous_private_key_must_not_be_accessed": true,
+    "new_key_must_differ_from_previous_key": true,
+    "new_manifest_must_verify_with_v2_public_key": true,
+    "new_manifest_must_fail_with_v1_public_key": true,
+    "all_protected_asset_digests_must_be_recalculated": true,
+    "secret_values_in_evidence": 0
+  }
+}

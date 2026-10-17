@@ -1,0 +1,80 @@
+{
+  "manifest_version": 2,
+  "manifest_name": "ClimateAdapt V3 serving-asset manifest V2",
+  "created_at_utc": "2026-10-17T05:37:50.467390+00:00",
+  "digest_algorithm": "SHA-256",
+  "signature_algorithm": "Ed25519",
+  "signing_key_version": "v2",
+  "previous_signing_key_version": "v1",
+  "public_key_sha256": "fb2bfe0fa724dcef9f066a274bf904f609ce53ae061adc05417679026a5c8034",
+  "previous_public_key_sha256": "878d1422fae2ab7de9f522ca7f4dc7010d77a67bfc2979eef979341b1c490c11",
+  "rotation_reason": "Demonstrate the documented signing-key lifecycle, limit long-term key exposure and satisfy the IT8527 key-rotation requirement.",
+  "assets": [
+    {
+      "path": "models/v3/logistic_regression_v3.joblib",
+      "role": "Frozen deployed V3 logistic-regression model",
+      "size_bytes": 1428,
+      "sha256": "78b7c54b245ddbf9247cb480d0336f347eeee67c2aa63cea7ed3a630455657b9"
+    },
+    {
+      "path": "outputs/full_region_inference_v3/nelson_logistic_susceptibility_score_v3.tif",
+      "role": "Primary uncalibrated susceptibility-score raster",
+      "size_bytes": 19101711,
+      "sha256": "635c1c22f32606d3cc9fcd73c981b62174e60441bc0e6f12d54362541265d46a"
+    },
+    {
+      "path": "outputs/full_region_inference_v3/nelson_logistic_susceptibility_v3.tif",
+      "role": "Frozen thresholded susceptibility raster",
+      "size_bytes": 281653,
+      "sha256": "ee3d91c2496fee59e78c293c6ebcf5f1ba862c81414b98bdf265021e9605ca7b"
+    },
+    {
+      "path": "outputs/full_region_inference_v3/nelson_logistic_coverage_v3.tif",
+      "role": "Valid model-coverage raster",
+      "size_bytes": 210863,
+      "sha256": "4c16c0116094a9e05b3e6b39e55c306e9f1b5290608fcbd81b399ecd55d27daf"
+    },
+    {
+      "path": "outputs/full_region_inference_v3/nelson_logistic_full_region_summary_v3.json",
+      "role": "Serving metadata and frozen operational threshold",
+      "size_bytes": 3133,
+      "sha256": "43027c6f5a4bdfc27abee7e20072dd474aaa7a9afbbf32a445556f9cdc7883be"
+    },
+    {
+      "path": "outputs/test_v3/v3_locked_test_summary.json",
+      "role": "Locked geographic test evidence exposed by the model endpoint",
+      "size_bytes": 9709,
+      "sha256": "7a07f5c24bfdae4e1a7ef8100f392e96695eba3f72a79bdec90838b7644d7e75"
+    },
+    {
+      "path": "data/processed/full_region/rasters/elevation_5m.tif",
+      "role": "Elevation context raster",
+      "size_bytes": 88201510,
+      "sha256": "8aeb33d3e634296232145db1284d355eed3e9885120a5cce9a3b0abf0f04ddb4"
+    },
+    {
+      "path": "data/processed/full_region/rasters/slope_degrees_5m.tif",
+      "role": "Slope context raster",
+      "size_bytes": 109957031,
+      "sha256": "c38c384a2c15a23ccc7f1dd0043f3aa9739a3ad6d79735ad4e189fd54aa17e3f"
+    },
+    {
+      "path": "data/processed/full_region/rasters/distance_to_coast_5m.tif",
+      "role": "Distance-to-coast context raster",
+      "size_bytes": 26763337,
+      "sha256": "f90cdb338e29b764d6ebfd561a363408e451b29decc1b496e742525d4ce2d9b2"
+    },
+    {
+      "path": "data/processed/full_region/rasters/land_cover_class_5m.tif",
+      "role": "Land-cover context raster",
+      "size_bytes": 1197753,
+      "sha256": "24b6ea5f8c2f10f7dd44dca7b74e8a063bea8ee98777a7d800a992725b7ed424"
+    },
+    {
+      "path": "data/processed/full_region/rasters/valid_land_mask_5m.tif",
+      "role": "Valid-land context mask",
+      "size_bytes": 245860,
+      "sha256": "2c7b584368968156ab5d5243f953f3277d0024e74460a934efce75895f4b458f"
+    }
+  ]
+}
