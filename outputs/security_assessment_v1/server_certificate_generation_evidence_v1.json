@@ -1,0 +1,41 @@
+{
+  "experiment": "ClimateAdapt IT8527 API server certificate issuance v1",
+  "certificate_name": "ClimateAdapt Prediction API Server v1",
+  "certificate_role": "TLS server authentication",
+  "subject": "CN=climateadapt-api.local,OU=IT8527 Security Assessment,O=ClimateAdapt AI Prototype,C=NZ",
+  "issuer": "CN=ClimateAdapt Local Root CA v1,OU=IT8527 Security Assessment,O=ClimateAdapt AI Prototype,C=NZ",
+  "serial_number_hex": "180069DB29F5535FF3C07D438C80DAE5373EF92D",
+  "key_algorithm": "RSA",
+  "key_size_bits": 3072,
+  "private_key_format": "Encrypted PKCS#8",
+  "signature_algorithm": "sha256WithRSAEncryption",
+  "signature_hash": "sha256",
+  "not_valid_before_utc": "2026-10-17T01:39:26+00:00",
+  "not_valid_after_utc": "2027-10-17T01:44:26+00:00",
+  "dns_names": [
+    "localhost",
+    "climateadapt-api.local"
+  ],
+  "ip_addresses": [
+    "127.0.0.1",
+    "::1"
+  ],
+  "extended_key_usage": [
+    "server_authentication"
+  ],
+  "is_ca": false,
+  "ca_signature_verified": true,
+  "hostname_verification_required": true,
+  "password_recorded": false,
+  "secret_values_in_evidence": 0,
+  "server_certificate_sha256_fingerprint": "5E:30:9D:CA:42:D0:A5:68:8A:54:0C:68:5E:D3:34:67:2C:AD:6E:99:54:AC:7D:0B:4C:23:88:0E:CB:6D:49:EC",
+  "root_ca_sha256_fingerprint": "AF:69:E9:49:29:2A:50:02:46:80:DF:AF:3A:1E:60:7E:26:E1:79:B7:8D:BC:94:F5:21:3C:59:0B:0D:C6:61:62",
+  "public_certificate_sha256": "7191278d9233340e114da97efe5cfcf8fc5133470da8f29cdf08ee0b1b3d21d9",
+  "certificate_chain_sha256": "66dbe2be8e6537de1508de330d91527d91a3b5da919ea4de448fbb0f9663f2bc",
+  "private_key_committed_to_git": false,
+  "outputs": {
+    "public_certificate": "security\\public\\certificates\\climateadapt_api_server_v1.crt",
+    "certificate_chain": "security\\public\\certificates\\climateadapt_api_server_v1_chain.crt",
+    "private_key": "Stored locally under security/private/ and excluded from Git"
+  }
+}
