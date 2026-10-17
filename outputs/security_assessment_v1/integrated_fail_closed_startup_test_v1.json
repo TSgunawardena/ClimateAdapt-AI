@@ -1,0 +1,18 @@
+{
+  "experiment": "ClimateAdapt V3 integrated fail-closed asset-startup test v1",
+  "recorded_at_utc": "2026-10-17T05:01:02.752208+00:00",
+  "status": "passed",
+  "target_asset": "outputs/test_v3/v3_locked_test_summary.json",
+  "controlled_test": true,
+  "production_asset_permanently_changed": false,
+  "asset_digest_changed_during_test": true,
+  "signed_manifest_mismatch_detected": true,
+  "secure_server_exit_was_nonzero": true,
+  "password_prompt_reached": false,
+  "network_bind_reached": false,
+  "fail_closed_before_secret_request": true,
+  "original_asset_restored": true,
+  "normal_verification_restored": true,
+  "private_signing_key_accessed": false,
+  "secret_values_in_evidence": 0
+}
