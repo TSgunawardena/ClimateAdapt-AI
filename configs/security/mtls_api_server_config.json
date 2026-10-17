@@ -1,0 +1,25 @@
+﻿{
+  "configuration_version": 1,
+  "service": "ClimateAdapt V3 Prediction API",
+  "security_mode": "mutual TLS",
+  "bind_host": "127.0.0.1",
+  "bind_port": 9443,
+  "minimum_tls_version": "TLSv1.2",
+  "maximum_tls_version": "TLSv1.3",
+  "client_certificate_requirement": "CERT_REQUIRED",
+  "server_certificate": "security/public/certificates/climateadapt_api_server_v1_chain.crt",
+  "server_private_key": "security/private/server/climateadapt_api_server_v1.key",
+  "trusted_client_ca": "security/public/certificates/climateadapt_root_ca_v1.crt",
+  "cipher_policy": "ECDHE+AESGCM:ECDHE+CHACHA20",
+  "application_script": "scripts/30_run_prediction_api.py",
+  "runtime_evidence": "outputs/security_assessment_v1/mtls_server_runtime_evidence_v1.json",
+  "controls": {
+    "require_encrypted_server_private_key": true,
+    "require_client_certificate": true,
+    "verify_client_chain_against_local_ca": true,
+    "permit_plain_http_on_secure_port": false,
+    "record_key_password": false,
+    "record_private_key": false
+  }
+}
+

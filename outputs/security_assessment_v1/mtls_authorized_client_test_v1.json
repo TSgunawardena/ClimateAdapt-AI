@@ -1,0 +1,37 @@
+{
+  "experiment": "ClimateAdapt IT8527 authorized mutual-TLS API test v1",
+  "recorded_at_utc": "2026-10-17T03:13:04.950238+00:00",
+  "endpoint": "https://127.0.0.1:9443",
+  "tls_handshake_completed": true,
+  "negotiated_tls_version": "TLSv1.3",
+  "negotiated_cipher": "TLS_AES_256_GCM_SHA384",
+  "server_certificate_verified": true,
+  "server_certificate_subject": "countryName=NZ, organizationName=ClimateAdapt AI Prototype, organizationalUnitName=IT8527 Security Assessment, commonName=climateadapt-api.local",
+  "server_certificate_issuer": "countryName=NZ, organizationName=ClimateAdapt AI Prototype, organizationalUnitName=IT8527 Security Assessment, commonName=ClimateAdapt Local Root CA v1",
+  "client_certificate_supplied": true,
+  "client_identity": "climateadapt-authorized-client-v1",
+  "health": {
+    "http_status": 200,
+    "application_status": "healthy",
+    "passed": true
+  },
+  "model": {
+    "http_status": 200,
+    "primary_model": "V3 logistic regression",
+    "operational_threshold": 0.004,
+    "passed": true
+  },
+  "prediction": {
+    "http_status": 200,
+    "application_status": "human_review_required",
+    "susceptibility_score": 0.3566444218158722,
+    "operational_threshold": 0.004,
+    "human_review_required": true,
+    "passed": true
+  },
+  "overall_passed": true,
+  "password_source": "interactive prompt; value not recorded",
+  "password_recorded": false,
+  "private_key_recorded": false,
+  "secret_values_in_evidence": 0
+}
