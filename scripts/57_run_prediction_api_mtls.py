@@ -11,6 +11,7 @@ import importlib.util
 import json
 import os
 import ssl
+import subprocess
 import sys
 from datetime import datetime, timezone
 from getpass import getpass
@@ -28,6 +29,18 @@ CONFIG_PATH = (
     / "configs"
     / "security"
     / "mtls_api_server_config.json"
+)
+ASSET_VERIFIER_PATH = (
+    PROJECT_ROOT
+    / "scripts"
+    / "61_verify_signed_asset_manifest.py"
+)
+
+ASSET_VERIFICATION_EVIDENCE_PATH = (
+    PROJECT_ROOT
+    / "outputs"
+    / "security_assessment_v1"
+    / "artifact_manifest_verification_evidence_v1.json"
 )
 
 
@@ -52,6 +65,55 @@ def require_file(path: Path, description: str) -> None:
             f"{description} was not found: {path}"
         )
 
+def verify_protected_assets() -> dict[str, Any]:
+    """Verify the signed manifest before loading or serving the API."""
+
+    require_file(
+        ASSET_VERIFIER_PATH,
+        "Signed-asset verification script",
+    )
+
+    verification = subprocess.run(
+        [
+            sys.executable,
+            str(ASSET_VERIFIER_PATH),
+        ],
+        cwd=PROJECT_ROOT,
+        check=False,
+    )
+
+    if verification.returncode != 0:
+        raise RuntimeError(
+            "Protected-asset verification failed. "
+            "The API will not start."
+        )
+
+    require_file(
+        ASSET_VERIFICATION_EVIDENCE_PATH,
+        "Asset-verification evidence",
+    )
+
+    evidence = load_json(
+        ASSET_VERIFICATION_EVIDENCE_PATH
+    )
+
+    verification_passed = (
+        evidence.get("status") == "passed"
+        and evidence.get("signature_verified") is True
+        and evidence.get("assets_declared") > 0
+        and evidence.get("assets_verified")
+        == evidence.get("assets_declared")
+        and not evidence.get("missing_assets")
+        and not evidence.get("mismatched_assets")
+    )
+
+    if not verification_passed:
+        raise RuntimeError(
+            "Asset-verification evidence did not satisfy "
+            "the fail-closed startup policy."
+        )
+
+    return evidence
 
 def load_prediction_module(script_path: Path) -> ModuleType:
     """Load Script 30 without running its plain-HTTP main block."""
@@ -108,6 +170,7 @@ def write_runtime_evidence(
     evidence_path: Path,
     password_source: str,
     ssl_context: ssl.SSLContext,
+    integrity_evidence: dict[str, Any],
 ) -> None:
     """Write redacted evidence of the enforced server configuration."""
 
@@ -150,6 +213,27 @@ def write_runtime_evidence(
         ),
         "prediction_model_changed": False,
         "prediction_threshold_changed": False,
+        "artifact_integrity_gate": (
+            "passed before application load and network bind"
+        ),
+        "artifact_manifest_signature_verified": (
+            integrity_evidence["signature_verified"]
+        ),
+        "protected_assets_declared": (
+            integrity_evidence["assets_declared"]
+        ),
+        "protected_assets_verified": (
+            integrity_evidence["assets_verified"]
+        ),
+        "missing_protected_assets": (
+            len(integrity_evidence["missing_assets"])
+        ),
+        "mismatched_protected_assets": (
+            len(integrity_evidence["mismatched_assets"])
+        ),
+        "artifact_private_key_accessed": (
+            integrity_evidence["private_key_accessed"]
+        ),
         "server_private_key_encrypted": True,
         "server_private_key_committed_to_git": False,
         "password_source": password_source,
@@ -205,7 +289,14 @@ def main() -> None:
         trusted_client_ca,
         "Trusted client root CA",
     )
+    print(
+        "\nVerifying signed V3 serving assets "
+        "before API startup...\n"
+    )
 
+    integrity_evidence = (
+        verify_protected_assets()
+    )
     password, password_source = (
         obtain_server_key_password()
     )
@@ -257,6 +348,7 @@ def main() -> None:
         evidence_path=runtime_evidence,
         password_source=password_source,
         ssl_context=uvicorn_config.ssl,
+        integrity_evidence=integrity_evidence,
     )
 
     print("")
@@ -273,6 +365,12 @@ def main() -> None:
     print("Client identity:CERT_REQUIRED")
     print("Trusted CA:     ClimateAdapt Local Root CA v1")
     print("Plain HTTP:     prohibited on secure port")
+    print(
+        "Asset integrity:"
+        f"{integrity_evidence['assets_verified']}/"
+        f"{integrity_evidence['assets_declared']} verified"
+    )
+    print("Startup policy: fail closed on integrity failure")
     print("Secrets logged: 0")
     print(
         "Evidence:       "
