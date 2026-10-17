@@ -1,0 +1,57 @@
+﻿{
+  "policy_version": 1,
+  "certificate_name": "ClimateAdapt Authorized Internal Client v1",
+  "purpose": "Authenticate the ClimateAdapt dashboard and agent workflow to the prediction API using mutual TLS.",
+  "subject": {
+    "country_name": "NZ",
+    "organisation_name": "ClimateAdapt AI Prototype",
+    "organisational_unit_name": "IT8527 Authorized API Clients",
+    "common_name": "climateadapt-authorized-client-v1"
+  },
+  "key": {
+    "algorithm": "RSA",
+    "size_bits": 3072,
+    "public_exponent": 65537,
+    "private_key_format": "Encrypted PKCS#8"
+  },
+  "certificate": {
+    "signature_hash": "SHA-256",
+    "validity_days": 365,
+    "is_ca": false,
+    "extended_key_usage": [
+      "client_authentication"
+    ],
+    "key_usage": [
+      "digital_signature",
+      "key_encipherment"
+    ]
+  },
+  "authorisation": {
+    "identity": "climateadapt-internal-client-v1",
+    "permitted_components": [
+      "Streamlit dashboard",
+      "LangGraph agent workflow",
+      "Assessment verification client"
+    ],
+    "permitted_service": "ClimateAdapt prediction API",
+    "production_limitation": "Production deployment must issue a unique client certificate to each component."
+  },
+  "issuer": {
+    "certificate_path": "security/public/certificates/climateadapt_root_ca_v1.crt",
+    "private_key_path": "security/private/ca/climateadapt_root_ca_v1.key"
+  },
+  "outputs": {
+    "private_key_path": "security/private/client/climateadapt_authorized_client_v1.key",
+    "certificate_path": "security/public/certificates/climateadapt_authorized_client_v1.crt",
+    "certificate_chain_path": "security/public/certificates/climateadapt_authorized_client_v1_chain.crt",
+    "evidence_path": "outputs/security_assessment_v1/client_certificate_generation_evidence_v1.json"
+  },
+  "security_controls": {
+    "private_key_must_be_encrypted": true,
+    "private_key_must_not_be_committed": true,
+    "password_must_not_be_recorded": true,
+    "certificate_must_be_ca_signed": true,
+    "client_authentication_usage_required": true,
+    "server_authentication_usage_prohibited": true
+  }
+}

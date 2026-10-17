@@ -1,0 +1,38 @@
+{
+  "experiment": "ClimateAdapt IT8527 authorized mTLS client issuance v1",
+  "certificate_name": "ClimateAdapt Authorized Internal Client v1",
+  "certificate_role": "TLS client authentication",
+  "authorised_identity": "climateadapt-internal-client-v1",
+  "permitted_components": [
+    "Streamlit dashboard",
+    "LangGraph agent workflow",
+    "Assessment verification client"
+  ],
+  "permitted_service": "ClimateAdapt prediction API",
+  "subject": "CN=climateadapt-authorized-client-v1,OU=IT8527 Authorized API Clients,O=ClimateAdapt AI Prototype,C=NZ",
+  "issuer": "CN=ClimateAdapt Local Root CA v1,OU=IT8527 Security Assessment,O=ClimateAdapt AI Prototype,C=NZ",
+  "serial_number_hex": "37DB3A174A1DE1F460DC555C4B1564328D41500D",
+  "key_algorithm": "RSA",
+  "key_size_bits": 3072,
+  "private_key_format": "Encrypted PKCS#8",
+  "signature_hash": "sha256",
+  "not_valid_before_utc": "2026-10-17T01:55:08+00:00",
+  "not_valid_after_utc": "2027-10-17T02:00:08+00:00",
+  "is_ca": false,
+  "client_authentication_present": true,
+  "server_authentication_absent": true,
+  "ca_signature_verified": true,
+  "password_recorded": false,
+  "secret_values_in_evidence": 0,
+  "certificate_sha256_fingerprint": "64:EC:CE:07:0F:FF:09:EE:EE:10:78:A7:C1:A8:42:BF:7A:42:48:59:39:BC:3E:14:30:26:64:45:34:0A:61:31",
+  "root_ca_sha256_fingerprint": "AF:69:E9:49:29:2A:50:02:46:80:DF:AF:3A:1E:60:7E:26:E1:79:B7:8D:BC:94:F5:21:3C:59:0B:0D:C6:61:62",
+  "public_certificate_sha256": "29f72127927b1cb2fc584034e873292aa454c8c0fd906868eb59cf1283e36b54",
+  "certificate_chain_sha256": "e5ccf513d4c4ee8f4612bd6b92425b29911427d0fc987a031b2667a7cc115953",
+  "private_key_committed_to_git": false,
+  "production_limitation": "Production deployment must issue a unique client certificate to each component.",
+  "outputs": {
+    "public_certificate": "security\\public\\certificates\\climateadapt_authorized_client_v1.crt",
+    "certificate_chain": "security\\public\\certificates\\climateadapt_authorized_client_v1_chain.crt",
+    "private_key": "Stored locally under security/private/ and excluded from Git"
+  }
+}
