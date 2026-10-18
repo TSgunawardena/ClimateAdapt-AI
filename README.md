@@ -247,8 +247,12 @@ logistic service reads precomputed rasters and does not require a GPU.
 The source repository deliberately excludes large model and raster files.
 Download the complete runtime package before starting the API or dashboard:
 
-**University OneDrive V3 runtime package:**
-`[LINK TO COMPLETE V3 RUNTIME PACKAGE – ADD BEFORE SUBMISSION]`
+**University OneDrive V3 runtime package (NMIT organisational access):**
+
+[Open the IT8532 Assessment 2 runtime and model packages](https://livenmitac-my.sharepoint.com/:f:/g/personal/tharusha-gunawardena_live_nmit_ac_nz/IgBqPj_Zu7SmS6Kur9a-DdhbATsFFGde6XGSBtbRoELMJKM)
+
+Sign in with an authorised NMIT account, then download the
+`ClimateAdapt_AI_Complete_Runtime_V3` folder.
 
 Package name:
 
@@ -420,8 +424,12 @@ The Planning Support Agent uses `climateadapt-planner:4b`, a QLoRA-adapted Qwen3
 
 The approximately 2.5 GB GGUF is excluded from Git because of its size. The separately supplied release contains the trained model, portable Ollama `Modelfile`, authentic Unsloth training notebook, model card, reproducibility guide, installation instructions and SHA-256 checksums.
 
-**University OneDrive standalone model release:**
-`[LINK TO STANDALONE MODEL RELEASE – ADD BEFORE SUBMISSION]`
+**University OneDrive standalone model release (NMIT organisational access):**
+
+[Open the IT8532 Assessment 2 runtime and model packages](https://livenmitac-my.sharepoint.com/:f:/g/personal/tharusha-gunawardena_live_nmit_ac_nz/IgBqPj_Zu7SmS6Kur9a-DdhbATsFFGde6XGSBtbRoELMJKM)
+
+Sign in with an authorised NMIT account, then download the
+`ClimateAdapt_Planner_4B_Model_Release` folder.
 
 The complete V3 runtime package linked earlier also contains the GGUF and
 `Modelfile`. The standalone model release is retained for direct inspection of
