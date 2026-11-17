@@ -376,6 +376,27 @@ python .\scripts\32_run_gitea_agent_workflow.py `
   --reviewer "Prototype reviewer"
 ```
 
+## Mobile app services
+
+The companion [ClimateAdapt Mobile](https://github.com/TSgunawardena/climateadapt-mobile) app uses the existing V3 prediction API through separate place, photo and privacy services. This integration does not change the geographic model, the planning agent or its approval workflow.
+
+| Service | Entry point | Default port | Python environment |
+| --- | --- | --- | --- |
+| V3 prediction API | `scripts/30_run_prediction_api.py` | `8000` | `.venv` |
+| Mobile places and screening | `scripts/54_run_mobile_bff.py` | `8081` | `.venv` |
+| Local Gemma photo analysis | `scripts/55_run_photo_bff.py` | `8080` | `.venv` |
+| Faces and number-plate privacy helper | `scripts/56_run_privacy_bff.py` | `8083` | `.venv-privacy` |
+| Ollama | `gemma3:4b` for photos | `11434` | Separate local application |
+| Expo development server | Run from the mobile repository | `8082` | Node.js |
+
+Selecting a photo starts automatic privacy detection. The original prepared JPEG goes to the local privacy helper, and the app opens a covered preview. Users review the whole photo, adjust covers if necessary and confirm. Script 56 then produces a fresh JPEG with permanent solid covers and no EXIF metadata. Only after the user taps Analyse does the app send that reviewed image to Script 55 and Gemma.
+
+Detection can miss private details. Human review remains required, and this is not a guarantee of anonymisation. The mobile app blocks unchecked uploads, but Script 55 does not independently authenticate a privacy-review receipt. These are local development services, not authenticated public APIs.
+
+Photo observations and optional GPS-based V3 screening remain separate evidence. The photo workflow does not use the fine-tuned planning model or publish Gitea issues. Neither a photo nor a V3 screening score establishes flood depth or calibrated flood probability.
+
+For dependencies, first-time setup, separate-terminal commands, service health, privacy model sources and tests, see [mobile services setup](docs/MOBILE-SERVICES.md).
+
 ## Verification commands
 
 ```powershell
