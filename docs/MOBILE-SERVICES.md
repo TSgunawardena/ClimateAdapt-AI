@@ -1,32 +1,41 @@
 # Mobile backend services
 
-The Android Expo app is maintained in [climateadapt-mobile](https://github.com/TSgunawardena/climateadapt-mobile). Run its Python services from this backend repository. Keep the V3 runtime data and existing project environment configured as described in the main README.
+The companion [ClimateAdapt Mobile](https://github.com/TSgunawardena/climateadapt-mobile) Android APK checks faces and number plates and applies reviewed covers on the phone. Run this repository's prediction, places and photo services for connected analysis. Keep the V3 runtime data and project environment configured as described in the [main README](../README.md).
 
-## Files
+## Current Android workflow
 
-```text
-scripts/
-  30_run_prediction_api.py
-  54_run_mobile_bff.py
-  55_run_photo_bff.py
-  56_run_privacy_bff.py
-  privacy_core.py
-  prepare_privacy_models.py
-  requirements-photo.txt
-  requirements-privacy.txt
-  test_privacy_bff.py
-```
+1. Selecting a camera or gallery photo starts detection on Android using bundled YuNet face and open-lpr YOLOX-tiny plate models through ONNX Runtime.
+2. The app opens a covered preview. Users inspect the complete photo, adjust missed or incorrect covers and confirm.
+3. Android exports a fresh JPEG with permanent solid covers without copying source EXIF metadata.
+4. Tapping Analyse sends the reviewed replacement to Script 55 and then to Gemma. Privacy detection and applying covers do not send the original to the laptop.
+5. Optional GPS is used for separate V3 screening. A photo observation and a location screening result remain different evidence.
 
-Scripts 54 and 55 are the working mobile integration scripts from the existing local backend. Keep those tested copies when committing this integration. The privacy update adds Script 56 and its helpers alongside them. The original integration sources are also available in the mobile repository's `backend-addon` directory.
+The privacy stage works offline with the bundled models. Gemma interpretation and geographic screening still need the laptop services. A missing or failed native privacy module does not automatically fall back to laptop processing or send an unchecked original.
 
-## Existing photo and places environment
+See [on-device privacy](https://github.com/TSgunawardena/climateadapt-mobile/blob/main/docs/ON-DEVICE-PRIVACY.md) for native sources, model preparation, release-build keep rules and validation limits.
 
-For a new installation, use the backend's existing `.venv`, install its root requirements and then the small photo dependency file. Do not reinstall a working environment merely to update documentation.
+## Required services
+
+| Component | Entry point | Default port |
+| --- | --- | --- |
+| Android privacy module | Included in the current mobile APK | None |
+| V3 prediction API | `scripts/30_run_prediction_api.py` | `8000` |
+| Places and geographic screening | `scripts/54_run_mobile_bff.py` | `8081` |
+| Gemma photo analysis | `scripts/55_run_photo_bff.py` | `8080` |
+| Ollama | `gemma3:4b` | `11434` |
+
+Script 56 and a separate Python privacy environment are not required by the current Android APK. They remain available for older clients, as described below.
+
+## First-time backend setup
+
+Use the backend's existing `.venv`. Install the root dependencies and photo dependency file if they are not already installed. Do not reinstall a working environment merely to update documentation.
 
 ```powershell
 .\.venv\Scripts\python.exe -m pip install -r .\requirements.txt
 .\.venv\Scripts\python.exe -m pip install -r .\scripts\requirements-photo.txt
 ```
+
+If the environment does not exist, create it first using the Python setup in the main README.
 
 Place analysis needs the separately supplied V3 raster runtime described in the main README. Gemma photo analysis needs Ollama with the vision model installed.
 
@@ -34,25 +43,11 @@ Place analysis needs the separately supplied V3 raster runtime described in the 
 ollama pull gemma3:4b
 ```
 
-This is a different model from `climateadapt-planner:4b`. The mobile photo workflow does not need to invoke the planning model.
+This is a different model from `climateadapt-planner:4b`. The mobile photo and places routes do not need the planning model or Gitea publication workflow.
 
-## Privacy environment
+## Start the current services
 
-First-time setup only, from the backend root
-
-```powershell
-python -m venv .venv-privacy
-.\.venv-privacy\Scripts\python.exe -m pip install -r .\scripts\requirements-privacy.txt
-.\.venv-privacy\Scripts\python.exe .\scripts\prepare_privacy_models.py
-```
-
-Model preparation downloads pinned versions and verifies SHA-256 checksums. Files are saved in `scripts/privacy-models`. The service runs inference locally on the CPU and does not require CUDA. Internet access is needed for installation and model downloads, not for subsequent privacy inference.
-
-The privacy models are separate from the existing university V3 runtime package. That package should not be assumed to contain them.
-
-## Start services
-
-Use a separate terminal for each command and keep Ollama running. Existing installations can go straight to these commands.
+From the backend project root, run each command in a separate terminal. Keep Ollama running.
 
 ```powershell
 .\.venv\Scripts\python.exe .\scripts\30_run_prediction_api.py
@@ -66,15 +61,7 @@ Use a separate terminal for each command and keep Ollama running. Existing insta
 .\.venv\Scripts\python.exe .\scripts\55_run_photo_bff.py
 ```
 
-```powershell
-.\.venv-privacy\Scripts\python.exe .\scripts\56_run_privacy_bff.py
-```
-
-Start Expo from the separate mobile project, not this backend repository.
-
-```powershell
-npx expo start --go --lan --port 8082
-```
+Open the installed Android APK directly. Metro and Expo Go are not needed. Expo Go cannot execute the custom native privacy module. For JavaScript development, use a compatible native development build from the mobile repository; rebuild after changing native code or bundled assets. The custom privacy module currently has no iOS or web implementation.
 
 ## Health and phone connections
 
@@ -83,54 +70,91 @@ npx expo start --go --lan --port 8082
 | Prediction | `http://127.0.0.1:8000/health` | Healthy runtime | Phone uses the places service |
 | Places | `http://127.0.0.1:8081/api/health` | `area_ready` is true | `http://192.168.1.20:8081` |
 | Photo | `http://127.0.0.1:8080/api/health` | `vision_ready` is true | `http://192.168.1.20:8080` |
-| Privacy | `http://127.0.0.1:8083/api/health` | `ready` is true and contract is `privacy-v1` | `http://192.168.1.20:8083` |
 
-Replace the example IP with the laptop's current Wi-Fi IPv4 address. On a phone, `127.0.0.1` refers to the phone. The phone and laptop need network reachability, and the firewall must allow the development services. Configure photo and privacy addresses in app Settings and the places address in Explore's connection settings.
+Replace the example IP with the laptop's current Wi-Fi IPv4 address. On the phone, `127.0.0.1` refers to the phone. For the local setup, connect both devices to the same network and allow the required development ports through the laptop firewall.
 
-Do not expose these unauthenticated development APIs directly to the public internet.
+Configure the photo address in app Settings and the places address in Explore's connection settings. The current Android APK needs no privacy-service address or privacy HTTP health check. Check the laptop address after a restart or network change.
 
-## Privacy workflow
+A successful health check does not prove that an image request will finish within its timeout. Run a real photo analysis and location query. If analysis times out, inspect Script 55 and Ollama logs. Initial model loading can add delay, but a timeout alone does not establish its cause.
 
-1. Taking or selecting a photo automatically sends its prepared JPEG to `POST /api/privacy/detect` on the laptop.
-2. The app displays detected faces and plates under solid black covers. Users must inspect the whole image and can adjust covers for missed or incorrect detections.
-3. After confirmation, `POST /api/privacy/apply` checks the source image digest and exports a fresh JPEG with permanent covers and no EXIF metadata.
-4. The reviewed JPEG replaces the app's working upload image. Tapping Analyse sends this replacement to Script 55 and then to Gemma.
-5. Optional GPS goes through separate location screening. Notes and GPS are not sent to the privacy detector.
+## Privacy and interpretation limits
 
-The helper does not create a photo archive. Images are handled in request memory; the app keeps temporary working copies. This does not remove the original from the user's gallery. The app's analysis waiting animation is decorative and does not apply privacy masks.
+Detection can miss faces and plates or cover the wrong detail. The models do not identify people, read plate text or automatically cover other identifiers such as names, house numbers and distinctive clothing. Zero detections still require review.
 
-The detectors target faces and number plates. They do not automatically cover every possible identifying detail, such as names, house numbers or distinctive clothing. A result containing no detections still requires review. Failure or cancellation must not silently send an unchecked original to analysis.
+The app keeps temporary working files rather than a photo archive. Its analysis waiting animation is decorative and does not apply privacy masks. The reviewed replacement goes to the laptop only when analysis is requested. The original gallery photograph remains under the user's control.
 
-The source digest binds the covers to their input image. It is not authentication or an independent proof to Script 55 that privacy review occurred. The review gate is part of the mobile client.
+Source-image binding prevents accidental cover/image mismatches inside the app. It is not authentication or an independent proof to Script 55 that review occurred. The laptop services use local HTTP without user authentication, so reviewed uploads are not transport-encrypted. Do not expose these development APIs directly to the public internet.
 
-## Models and licences
+Photo findings are preliminary observations, not measurements of water depth or flood probability. V3 location results are uncalibrated susceptibility screening. Neither establishes that a location will flood or is safe from future flooding.
+
+## Current APK smoke checks
+
+- Stop Script 56 and verify that selecting a photo still opens privacy review.
+- Turn Wi-Fi and GPS off and verify detection and applying covers still work.
+- Inspect the complete photo and correct missed or incorrect covers before confirming.
+- Restore the network, run Scripts 30, 54 and 55, and make a real photo-analysis and location-screening request.
+- Check that the reviewed photo remains available after an analysis failure.
+- Record the tested APK build and source revision separately. Report only checks actually performed.
+
+These are functional checks, not detector-accuracy, accessibility or comprehensive security benchmarks. Mobile contract and privacy tests are maintained in the mobile repository.
+
+## Legacy laptop privacy helper
+
+The instructions in this section apply only to older clients using the laptop privacy API. Keep these files for compatibility rather than treating Script 56 as a current Android dependency.
+
+```text
+scripts/
+  56_run_privacy_bff.py
+  privacy_core.py
+  prepare_privacy_models.py
+  requirements-privacy.txt
+  test_privacy_bff.py
+```
+
+### Legacy setup and launch
+
+First-time setup from the backend root
+
+```powershell
+python -m venv .venv-privacy
+.\.venv-privacy\Scripts\python.exe -m pip install -r .\scripts\requirements-privacy.txt
+.\.venv-privacy\Scripts\python.exe .\scripts\prepare_privacy_models.py
+```
+
+The helper downloads pinned model files, verifies SHA-256 checksums and stores them in `scripts/privacy-models`. It runs inference on the laptop CPU. These files are separate from the university V3 runtime package.
+
+Start the legacy helper in its own terminal
+
+```powershell
+.\.venv-privacy\Scripts\python.exe .\scripts\56_run_privacy_bff.py
+```
+
+Its health endpoint is `http://127.0.0.1:8083/api/health`. A legacy client uses the laptop's address on port 8083 and expects `ready: true` with contract `privacy-v1`.
+
+Unlike the current Android path, this legacy workflow sends the original prepared JPEG to `POST /api/privacy/detect` on the laptop. After review, `POST /api/privacy/apply` verifies the source digest and returns a flattened covered JPEG. That replacement can then go to Script 55. The helper handles images in request memory without creating an archive, but the original still crosses the network in this architecture.
+
+### Legacy models and tests
 
 | Target | Model | Source | Published licence |
 | --- | --- | --- | --- |
 | Faces | YuNet 2023mar | [OpenCV Zoo](https://huggingface.co/opencv/opencv_zoo/tree/d4938dfc9d4ec5d098bfa33e98b3f3345a236586/models/face_detection_yunet) | MIT |
 | Plates | YOLOX-tiny, 640 input | [open-lpr-models](https://huggingface.co/faisalthaheem/open-lpr-models/tree/aed0df35ec2891c5a90437041ebeadb592cc516b/onnx) | Apache 2.0 as declared by the publisher |
 
-Exact model revisions and checksums are in `prepare_privacy_models.py`. No OCR model or text recognition is used. Keep downloaded models out of Git and retain their upstream terms when redistributing them. Test representative local plates and image conditions rather than claiming accuracy from a synthetic test image.
+Exact legacy revisions and checksums are in `scripts/prepare_privacy_models.py`. The Android downloader and checksums are maintained in the mobile repository. Retain the upstream model terms when redistributing weights.
 
-## Verification
-
-Privacy unit and API tests use injected detector results and do not need downloaded models or running services.
+Legacy unit and API tests use injected detections and do not need downloaded models or running services.
 
 ```powershell
 .\.venv-privacy\Scripts\python.exe -m unittest discover -s .\scripts -p test_privacy_bff.py -v
 ```
 
-The tests check image limits, cover bounds, flattened output, metadata removal, source binding, explicit review, request validation and unavailable-detector handling. They do not measure detection accuracy.
-
-On the phone, check a suitable synthetic image with two faces, two plates and visible standing water. Confirm automatic preview opening, correct coverage, manual corrections, zero detections, cancellation and privacy-service failure. Check that the water and drain remain visible to the photo model. Record missed detections and false covers honestly.
+They check image limits, cover bounds, flattened output, metadata removal, source binding, explicit review, request validation and unavailable-detector handling. They do not measure detector accuracy or execute Android native code.
 
 ## Git exclusions
 
-Keep these out of source control
+Keep local environments, downloaded models, private photos and credentials out of source control.
 
 ```gitignore
 .venv-privacy/
 scripts/privacy-models/
 ```
-
-Commit source, dependency files and tests. Do not commit virtual environments, downloaded models, private photos or local credentials.

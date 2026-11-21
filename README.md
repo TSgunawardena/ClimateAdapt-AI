@@ -378,24 +378,27 @@ python .\scripts\32_run_gitea_agent_workflow.py `
 
 ## Mobile app services
 
-The companion [ClimateAdapt Mobile](https://github.com/TSgunawardena/climateadapt-mobile) app uses the existing V3 prediction API through separate place, photo and privacy services. This integration does not change the geographic model, the planning agent or its approval workflow.
+The companion [ClimateAdapt Mobile](https://github.com/TSgunawardena/climateadapt-mobile) Android APK performs face and number-plate detection and applies reviewed covers on the phone. It uses this backend for Gemma photo interpretation and separate V3 geographic screening. This integration does not change the geographic model, planning agent or approval workflow.
 
-| Service | Entry point | Default port | Python environment |
+| Component | Entry point | Default port | Runtime |
 | --- | --- | --- | --- |
-| V3 prediction API | `scripts/30_run_prediction_api.py` | `8000` | `.venv` |
-| Mobile places and screening | `scripts/54_run_mobile_bff.py` | `8081` | `.venv` |
-| Local Gemma photo analysis | `scripts/55_run_photo_bff.py` | `8080` | `.venv` |
-| Faces and number-plate privacy helper | `scripts/56_run_privacy_bff.py` | `8083` | `.venv-privacy` |
+| Android privacy module | Bundled in the mobile APK | None | Android CPU |
+| V3 prediction API | `scripts/30_run_prediction_api.py` | `8000` | Backend `.venv` |
+| Mobile places and screening | `scripts/54_run_mobile_bff.py` | `8081` | Backend `.venv` |
+| Local Gemma photo analysis | `scripts/55_run_photo_bff.py` | `8080` | Backend `.venv` |
 | Ollama | `gemma3:4b` for photos | `11434` | Separate local application |
-| Expo development server | Run from the mobile repository | `8082` | Node.js |
 
-Selecting a photo starts automatic privacy detection. The original prepared JPEG goes to the local privacy helper, and the app opens a covered preview. Users review the whole photo, adjust covers if necessary and confirm. Script 56 then produces a fresh JPEG with permanent solid covers and no EXIF metadata. Only after the user taps Analyse does the app send that reviewed image to Script 55 and Gemma.
+Selecting a photo starts privacy checking automatically on Android using bundled YuNet face and open-lpr YOLOX-tiny plate detectors through ONNX Runtime. Detection and applying covers work offline. Users inspect the whole preview, adjust covers if necessary and confirm. The phone exports a fresh JPEG with permanent solid covers without copying source EXIF metadata. Only after the user taps Analyse does the reviewed replacement go to Script 55 and Gemma. The current Android privacy path does not upload the original to a laptop detector and has no automatic server fallback.
 
-Detection can miss private details. Human review remains required, and this is not a guarantee of anonymisation. The mobile app blocks unchecked uploads, but Script 55 does not independently authenticate a privacy-review receipt. These are local development services, not authenticated public APIs.
+Use the installed APK directly. Metro and Expo Go are not needed for normal use. Expo Go cannot run the custom native privacy module. JavaScript development requires a compatible native development build; native changes require rebuilding the app. The custom privacy module currently has no iOS or web implementation.
+
+Script 56, its downloaded privacy models and `.venv-privacy` are retained only for older clients that use laptop masking. They are not required by the current Android APK.
+
+Detection can miss private details. Human review remains required, and this is not a guarantee of anonymisation. The mobile app blocks unchecked uploads, but Script 55 does not independently authenticate a privacy-review receipt. The laptop services use local HTTP without user authentication, so reviewed uploads are not transport-encrypted. These are development services rather than public deployment endpoints.
 
 Photo observations and optional GPS-based V3 screening remain separate evidence. The photo workflow does not use the fine-tuned planning model or publish Gitea issues. Neither a photo nor a V3 screening score establishes flood depth or calibrated flood probability.
 
-For dependencies, first-time setup, separate-terminal commands, service health, privacy model sources and tests, see [mobile services setup](docs/MOBILE-SERVICES.md).
+For dependencies, separate-terminal commands, phone addresses, health checks and the legacy privacy helper, see [mobile services setup](docs/MOBILE-SERVICES.md). The mobile repository documents [on-device privacy and model preparation](https://github.com/TSgunawardena/climateadapt-mobile/blob/main/docs/ON-DEVICE-PRIVACY.md).
 
 ## Verification commands
 
